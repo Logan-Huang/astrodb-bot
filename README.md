@@ -6,11 +6,11 @@ To install this in another agent, you can rename/copy the `.claude` directory to
 
 ## Skills
 
-- [`parse-data-table`](.claude/skills/parse-data-table/SKILL.md) — summarizes table columns, descriptions, units, and types.
-- [`match-schema`](.claude/skills/match-schema/SKILL.md) — maps parsed columns to [AstroDB Template](https://github.com/astrodbtoolkit/astrodb-template-db) tables and fields
-- [`validate-schema-mapping`](.claude/skills/validate-schema-mapping/SKILL.md) — identifies problems with nulls and inconsistent data types
-- [`generate-felis-schema`](.claude/skills/generate-felis-schema/SKILL.md) — creates a Felis-format schema.yaml file using outputs of previous skills
-- [`create-astrodb`](.claude/skills/create-astrodb/SKILL.md) — Create an empty SQLite AstroDB database from a Felis-validated schema.yaml, following the astrodb-template-db file structure.
+- [`astrodb-parse-data-table`](.claude/skills/astrodb-parse-data-table/SKILL.md) — summarizes table columns, descriptions, units, and types.
+- [`astrodb-match-schema`](.claude/skills/astrodb-match-schema/SKILL.md) — maps parsed columns to [AstroDB Template](https://github.com/astrodbtoolkit/astrodb-template-db) tables and fields
+- [`astrodb-validate-schema-mapping`](.claude/skills/astrodb-validate-schema-mapping/SKILL.md) — identifies problems with nulls and inconsistent data types
+- [`astrodb-generate-schema`](.claude/skills/astrodb-generate-schema/SKILL.md) — creates a Felis-format schema.yaml file using outputs of previous skills
+- [`astrodb-create-db`](.claude/skills/astrodb-create-db/SKILL.md) — Create an empty SQLite AstroDB database from a Felis-validated schema.yaml, following the astrodb-template-db file structure.
 
 ## Requirements
 
