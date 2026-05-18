@@ -40,7 +40,7 @@ If source already exists: adds new name as alternate in `Names` only.
 These are column names **in the database Sources table** — not in the input data file.
 Defaults (`ra_deg`, `dec_deg`) match astrodb-template-db. Only change if your DB schema differs.
 
----
+--- 
 
 ## Common warnings and fixes
 
