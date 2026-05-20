@@ -28,12 +28,13 @@ Use the bundled setup script to generate the `.env` file. You must point it to t
 
 ### Step 2.1: Verify Table and Column Names (Crucial)
 
-Before running the setup script, verify the primary table name and coordinate columns:
+Before running the setup script, verify the primary table name and coordinate columns to ensure the web interface correctly maps the data.
 
 1. **Check for primary table**: Run `sqlite3 <path-to-your-db>.sqlite ".tables"`
-   - If a table named `Sources` or `sources` is not found, **ask the user** what the primary sources table is.
+   - If a table named `Sources` or `sources` is not found, **identify the most likely primary table** or ask the user.
 2. **Check coordinate columns**: Run `sqlite3 <path-to-your-db>.sqlite "PRAGMA table_info(<primary_table>);"`
-   - Identify the RA and Dec column names (e.g., `ra` vs `ra_deg`).
+   - Identify the RA and Dec column names (e.g., `ra` vs `ra_deg`). If they are missing, the website may fail to render maps.
+3. **Identify Foreign Keys**: Check if there's a configuration file (like `database.toml`) that defines `lookup_tables` or foreign key relationships to ensure multi-table views work.
 
 ### Step 2.2: Run Setup Script
 
@@ -48,11 +49,14 @@ uv run python .claude/skills/astrodb-website/scripts/setup_website.py \
   --dec-col <dec_column_name>
 ```
 
-The script will:
-1. Create a `.env` file inside `website/`.
-2. Configure it to point to your database.
-3. Read `lookup_tables` from `database.toml` if it exists.
-4. Set the primary table and coordinate column names.
+### Step 2.3: Validate .env Persistence (Crucial)
+
+Immediately after running the script, **cat the generated `.env` file** to ensure it contains the expected values:
+- `ASTRO_WEB_DATABASE_URL` (should be an absolute `sqlite:///` path).
+- `ASTRO_WEB_PRIMARY_TABLE`
+- `ASTRO_WEB_RA_COLUMN` / `ASTRO_WEB_DEC_COLUMN`
+
+If the `.env` is empty or missing these keys, re-run Step 2.2.
 
 ## Step 3: Install Dependencies and Start the Server
 
@@ -62,25 +66,22 @@ uv sync
 uv run serve
 ```
 
-Alternatively, you can run it manually with:
-```bash
-uv run uvicorn astro_web.main:app --reload --port 8000
-```
+*Note: `uv run serve` typically starts uvicorn on port 8000.*
 
-## Step 4: Verify the Website
+## Step 4: Verify the Website (The "Curl" Check)
 
-After starting the server, verify that the `/browse` endpoint is accessible and returns the expected content. You should run the server in the background or use a separate command to check it.
+You **MUST** verify the website is actually serving data before finishing.
 
-```bash
-# Verify the browse endpoint
-curl -s http://localhost:8000/browse | grep -i "<table"
-```
+1. **Start in background** if needed: `uv run uvicorn astro_web.main:app --port 8000 &`
+2. **Wait and Check**: Give it a few seconds to initialize, then:
+   ```bash
+   curl -s http://localhost:8000/browse | grep -i "<table"
+   ```
 
-Verify that:
-1. The response is valid HTML.
-2. It contains a `<table>` (the sources list).
-
-If the verification fails, check the server logs and verify your `.env` configuration.
+**Failure Recovery:**
+- If `curl` returns nothing or an error, check the server output/logs.
+- **Common issue**: Table name case sensitivity (`Galaxies` vs `galaxies`).
+- **Common issue**: Relative paths in `.env`. Ensure `ASTRO_WEB_DATABASE_URL` uses an absolute path.
 
 ## Step 5: Report Success
 
