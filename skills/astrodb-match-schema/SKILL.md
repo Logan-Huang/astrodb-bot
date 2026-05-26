@@ -1,6 +1,6 @@
 ---
-name: match-schema
-description: Match columns from an astronomical data table to fields in the AstroDB template database schema. Use this skill whenever the user wants to ingest, import, or load a data table (FITS, CSV, ECSV, etc.) into an AstroDB database, wants to know which database table or field a column belongs to, asks about schema mapping, column mapping, or data ingestion, or has output from the parse-data-table skill and wants to figure out where each column goes. This skill should also trigger when the user shares a table of columns (with names, descriptions, units, types) and asks about AstroDB, SIMPLE, or any astrodb-toolkit database. Always use this skill proactively after parse-data-table runs if the user seems to be working toward database ingestion.
+name: astrodb-match-schema
+description: Match columns from an astronomical data table to fields in the AstroDB template database schema. Use this skill whenever the user wants to ingest, import, or load a data table (FITS, CSV, ECSV, etc.) into an AstroDB database, wants to know which database table or field a column belongs to, asks about schema mapping, column mapping, or data ingestion, or has output from the astrodb-parse-data-table skill and wants to figure out where each column goes. This skill should also trigger when the user shares a table of columns (with names, descriptions, units, types) and asks about AstroDB, SIMPLE, or any astrodb-toolkit database. Always use this skill proactively after astrodb-parse-data-table runs if the user seems to be working toward database ingestion.
 compatibility: python, astropy
 metadata:
   authors: ["Claude"]
@@ -16,11 +16,11 @@ exactly which table and field each column belongs to before ingesting data.
 
 Accept input in either form:
 
-1. **A markdown table** (e.g., output from the `parse-data-table` skill) with columns: Column,
+1. **A markdown table** (e.g., output from the `astrodb-parse-data-table` skill) with columns: Column,
    Description, Units, Type
-2. **A data file path** — run the `parse-data-table` skill on it first, then proceed with its output
+2. **A data file path** — run the `astrodb-parse-data-table` skill on it first, then proceed with its output
 
-If given a file path, invoke `parse-data-table` first and wait for its output before continuing.
+If given a file path, invoke `astrodb-parse-data-table` first and wait for its output before continuing.
 
 ## The AstroDB Template Schema
 
@@ -29,7 +29,7 @@ It covers all Lookup Tables, Main Tables, and Data Tables with every field name.
 
 ## Astropy Unit Normalization
 
-When input comes from the `parse-data-table` skill, units may be in astropy's canonical spaced
+When input comes from the `astrodb-parse-data-table` skill, units may be in astropy's canonical spaced
 format. Treat these as equivalent to their compact forms when matching:
 
 | Astropy format | Equivalent to |
@@ -58,7 +58,7 @@ Profile Service IDs before populating `PhotometryFilters.band`.
 
 ## Output
 
-Output the results as a markdown table, adding columns onto the output from `parse-data-table` for the matched AstroDB Table, AstroDB Field, Confidence level, and Notes on the match. 
+Output the results as a markdown table, adding columns onto the output from `astrodb-parse-data-table` for the matched AstroDB Table, AstroDB Field, Confidence level, and Notes on the match. 
 
 Also write the results to an HTML file using the `Write` tool. Follow the full visual spec in `references/html-output.md` — read it now before writing the file.
 
