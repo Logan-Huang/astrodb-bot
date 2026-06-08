@@ -89,9 +89,9 @@ name.
 ## Step 6: Confirm, and point to what's next
 
 Tell the user the scaffold is ready: where the repo was cloned, that the structure checks out, and that
-`db_name` is set. Then name the next step without doing it — adding a data table to parse and map into
+`db_name` is set. Then name the next step, `astro-parse-data-table`, without doing it — adding a data table to parse and map into
 this schema is a separate skill:
 
 > Your AstroDB repo is cloned into `<repo-dir>`, the structure matches the template, and `db_name` is set
-> to `<new-name>`. The next step is to bring in a data table — let me know when you have one and we'll
+> to `<new-name>`. The next step is to bring in a data table and run the `astro-parse-data-table` skill — let me know when you have one and we'll
 > parse it into this database.
