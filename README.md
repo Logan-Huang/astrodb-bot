@@ -11,6 +11,8 @@ To install this in another agent, you can copy the `skills/` directory to whatev
 - [`astrodb-validate-schema-mapping`](.claude/skills/astrodb-validate-schema-mapping/SKILL.md) — identifies problems with nulls and inconsistent data types
 - [`astrodb-generate-schema`](.claude/skills/astrodb-generate-schema/SKILL.md) — creates a Felis-format schema.yaml file using outputs of previous skills
 - [`astrodb-create-db`](.claude/skills/astrodb-create-db/SKILL.md) — Create an empty SQLite AstroDB database from a Felis-validated schema.yaml, following the astrodb-template-db file structure.
+- [`astrodb-ingest-source`](.claude/skills/astrodb-ingest-source/SKILL.md) — ingests sources (astronomical objects) from a data table into the Sources table.
+- [`astrodb-ingest-publication`](.claude/skills/astrodb-ingest-publication/SKILL.md) — ingests publications into the Publications table from a DOI/bibcode or a table of references, and backfills missing bibcode/DOI/description for existing references.
 
 ## Requirements
 

@@ -1,0 +1,44 @@
+{
+  "skill_name": "astrodb-ingest-publication",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Please add the discovery publication for Rojas et al. 2012 to my Publications table. The DOI is 10.1088/0004-637X/748/2/93 and my database.toml is in the project root.",
+      "expected_output": "A Python script is written to tmp/ that checks for the publication with find_publication, ingests it with ingest_publication(doi=...), runs as a dry run (SAVE_DB=False), and asks the user to confirm before saving. The skill notes whether an ADS token is available.",
+      "files": [],
+      "expectations": [
+        "A script is written to a tmp/ directory, named after the reference/label (e.g. ingest_Rojas12_publications.py)",
+        "find_publication is called to check for an existing match before ingesting",
+        "ingest_publication is called with doi=\"10.1088/0004-637X/748/2/93\"",
+        "The skill checks for an ADS token (check_ads_token) and explains what happens if it is missing, rather than failing silently",
+        "SAVE_DB is set to False for the dry run",
+        "The user is asked to confirm before the database is saved"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Before I ingest sources from evals/data/discovery_refs.csv, I need all the references in it to exist in my Publications table. Add any that are missing. database.toml is in the project root.",
+      "expected_output": "A script reads the CSV, extracts the unique values from the reference column (Cruz03, Tinn05, Hawl02, Cush11, Burg99 — 5 unique, not 7 rows), checks each with find_publication, ingests missing ones as bare shortnames with ignore_ads=True, runs SAVE_DB=False, reports a summary, and asks before saving.",
+      "files": ["evals/data/discovery_refs.csv"],
+      "expectations": [
+        "The table is read and the UNIQUE values of the reference column are used (5 unique: Cruz03, Tinn05, Hawl02, Cush11, Burg99 — duplicates collapsed, not all 7 rows)",
+        "find_publication is used so references already present are skipped rather than duplicated",
+        "Bare reference shortnames are ingested with ignore_ads=True and a reference value (no DOI/bibcode is invented for them)",
+        "SAVE_DB is False and a summary of added vs already-present is reported",
+        "The user is asked to confirm before saving"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Add the paper with DOI 10.1086/345412 (reference Hawl02) to my database. I haven't set up an ADS token. The database.toml is in the root.",
+      "expected_output": "The skill recognizes there is no ADS token, does not fail silently, and either guides the user to set up ADS_TOKEN or proceeds with ignore_ads=True using the supplied reference Hawl02. Dry run with SAVE_DB=False, confirm before saving.",
+      "files": [],
+      "expectations": [
+        "The skill recognizes the ADS token is missing and does not silently fail",
+        "It either explains how to set up ADS_TOKEN or proceeds with ignore_ads=True (or both)",
+        "When proceeding without ADS, ingest_publication is called with reference=\"Hawl02\" and ignore_ads=True",
+        "SAVE_DB is False and the user is asked to confirm before saving"
+      ]
+    }
+  ]
+}
