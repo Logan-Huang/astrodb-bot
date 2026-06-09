@@ -38,10 +38,10 @@ Before running the setup script, verify the primary table name and coordinate co
 
 ### Step 2.2: Run Setup Script
 
-Run the script with the verified table and column names:
+Check the script location (eg, .agents/skills, .claude/skills or similar) and run the script with the verified table and column names:
 
 ```bash
-uv run python .claude/skills/astrodb-website/scripts/setup_website.py \
+uv run python .agents/skills/astrodb-website/scripts/setup_website.py \
   --db-path <path-to-your-db>.sqlite \
   --website-dir website/ \
   --primary-table <primary_table_name> \
@@ -90,6 +90,12 @@ You **MUST** verify the website is actually serving data before finishing.
 
 Inform the user that the website is running at **http://localhost:8000**.
 Remind them they can stop the server with `Ctrl+C`.
+
+## Step 6: Advice on next steps
+
+Notify the user that changes to the sqlite binary file should be reflected in the website. Restart the server if changes are not reflected.
+
+Notify the user that their next step should be to set up a permanent hosting solution for production use, such as using a cloud provider or a dedicated server.
 
 ## Troubleshooting
 
