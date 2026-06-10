@@ -25,7 +25,7 @@
         "Searches Google Scholar, NASA ADS, or Crossref for each paper; does NOT call ingest_publication with bare shortnames",
         "Resolves the CORRECT paper for spot-checked references using stream context: Bonaca2020->GD-1 doi 10.3847/2041-8213/ab800c; Ibata2024->STREAMFINDER atlas doi 10.3847/1538-4357/ad382d; Yang2023->M3 doi 10.3847/1538-4357/acdee2; Shipp2020->Palomar 13 doi 10.3847/1538-3881/abbd3a; Koposov2023->Orphan-Chenab doi 10.1093/mnras/stad551",
         "Shows the resolved reference->DOI/title table to the user and waits for confirmation before writing",
-        "Fills via a direct UPDATE on a COPY of the sqlite (the rows already exist, so re-ingesting would collide on the reference primary key)",
+        "Fills via a direct UPDATE on the sqlite after user confirmation (the rows already exist, so re-ingesting would collide on the reference primary key)",
         "Verifies zero rows still have NULL bibcode/doi/description after writing"
       ]
     },

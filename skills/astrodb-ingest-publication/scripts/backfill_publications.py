@@ -6,7 +6,7 @@ This is a PATTERN to adapt — not a script to run as-is. Phase 1 (resolving eac
 shortname to a real DOI/bibcode/title) happens before this script: do it with the
 agent + the database's own context (the stream/object each reference is attached
 to), confirm the resolved table with the user, then drop the verified values into
-METADATA below.
+METADATA below. Only run this script after the user has confirmed the resolved table.
 
 Two database forms are supported:
   - standalone .sqlite  -> direct UPDATE (default below; the row already exists, so
@@ -19,8 +19,7 @@ Idempotent: a reference whose metadata is already present is left untouched.
 import sqlite3
 import sys
 
-# Work on a COPY of the database, never the original.
-DB_PATH = sys.argv[1] if len(sys.argv) > 1 else "publications_filled.sqlite"
+DB_PATH = sys.argv[1] if len(sys.argv) > 1 else "path/to/database.sqlite"
 
 # reference -> (bibcode, doi, description)   <- verified in Phase 1, confirmed with user
 # Use real values, never placeholders. Leave a field as None only if it genuinely
@@ -65,9 +64,6 @@ nulls = cur.execute(
 ).fetchone()[0]
 print(f"Rows still missing any metadata: {nulls}")
 con.close()
-
-# NOTE on "disk I/O error": SQLite is unreliable on mounted/network paths. If you hit it,
-# copy the DB to local disk (e.g. /tmp), run this there, then copy the finished file back.
 
 # --- JSON template-layout variant (when you have database.toml + data/ and an ADS token) ---
 # Instead of a direct UPDATE you can let ADS fill bibcode/description from the DOI:

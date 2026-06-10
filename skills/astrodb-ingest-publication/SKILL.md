@@ -165,18 +165,17 @@ Use this when `Publications` already has the `reference` rows but `bibcode`/`doi
 
 Step 2 (resolve + verify) is the whole job here — you have shortnames and nothing else.
 Resolve each to the right paper using the object/stream context the database provides,
-verify, and confirm the resolved table with the user. Then fill:
+then show the user the full resolved table and **wait for explicit confirmation** before
+writing anything. Only after confirmation, fill:
 
 - **Standalone `.sqlite`** (what users usually hand you): connect and
   `UPDATE Publications SET bibcode=?, doi=?, description=? WHERE reference=?` per reference.
   A direct update is correct because the row already exists — re-ingesting would collide on
-  the `reference` primary key. Work on a **copy**; if SQLite throws a "disk I/O error" on a
-  mounted/network path, do the writes on local disk and copy the finished file back; use
-  rollback-journal mode (not WAL) so the single file stays self-contained.
+  the `reference` primary key.
 - **JSON template layout** (`database.toml` + `data/`): with a token,
   `ingest_publication(doi=..., reference=...)` fills from ADS; check `get_db_publication`
   first and update a blank existing row rather than inserting a duplicate. Then
-  `db.save_database()` after a confirmed dry run.
+  `db.save_database()`.
 
 Backfill is idempotent: skip references whose metadata is already populated. When done,
 verify zero rows still have NULL `bibcode`/`doi`/`description`.
