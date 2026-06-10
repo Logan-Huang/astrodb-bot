@@ -1,8 +1,7 @@
-source_name,ra_deg,dec_deg,reference
-2MASS J0036+1821,9.0673,18.3528,Cruz03
-2MASS J0045+1634,11.3400,16.5800,Cruz03
-LP 944-20,53.0000,-35.0000,Tinn05
-SDSS J0207+0000,31.9000,0.0000,Hawl02
-WISE J0410+1502,62.5000,15.0400,Cush11
-WISE J0410+1502,62.5000,15.0400,Cush11
-2MASS J1217-0311,184.2500,-3.1900,Burg99
+source_name,ra_deg,dec_deg,reference,stream
+MockSource_001,45.123,-18.456,Shipp2019,Turranburra
+MockSource_002,273.789,-75.012,Koposov2023,Orphan-Chenab
+MockSource_003,285.456,-30.789,Vasiliev2021,Sagittarius
+MockSource_004,346.123,2.345,Grillmair2022,M2
+MockSource_005,341.678,5.901,Shipp2020,Palomar 13
+MockSource_006,36.234,-34.567,Li2021,Cetus-Palca

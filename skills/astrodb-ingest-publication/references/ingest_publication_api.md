@@ -81,6 +81,36 @@ db.save_database()
 
 ---
 
+## Resolving a reference when you have no DOI
+
+This is the common case. `ingest_publication` needs a DOI or bibcode; a bare shortname
+(`Cruz03`) or "author + year" is not enough. Resolve it first:
+
+1. **Disambiguate with context.** A shortname maps to many possible papers, so use what the
+   database knows. The object/stream a reference is attached to is the strongest clue — find
+   it in `Associations` / `Sources` / `Photometry` / etc.:
+   ```python
+   # what object(s) does this reference describe?
+   cur.execute("SELECT DISTINCT association FROM Associations WHERE reference=?", ("Bonaca2020",))
+   # -> 'GD-1'  => this is the GD-1 paper, not some other Bonaca 2020
+   ```
+2. **Search** with author + year + object/topic on **Google Scholar**, **NASA ADS**
+   (`https://ui.adsabs.harvard.edu/`), or **Crossref**. Crossref turns a title into a DOI
+   reliably and needs no key:
+   ```
+   https://api.crossref.org/works?query.bibliographic=<author year object/title>&rows=1
+       &select=DOI,title,container-title,volume,page,published
+   ```
+   NASA ADS gives the bibcode (`2020ApJ...892L..37B`); Crossref gives the DOI + exact
+   title/volume/page (from which the bibcode also follows: `YYYY` + journal + volume + page
+   + first-author initial).
+3. **Verify before writing.** Check author, year, and that the title matches the object the
+   reference is attached to. Wrong-paper metadata is worse than a blank row. Show the user
+   the resolved `reference → title → DOI → bibcode → disambiguating context` and confirm.
+
+Only after a verified DOI/bibcode is in hand do you call `ingest_publication` (or write the
+row directly for a standalone sqlite backfill).
+
 ## ADS token setup
 
 `ingest_publication` auto-fills metadata by querying NASA ADS, which needs a token.
