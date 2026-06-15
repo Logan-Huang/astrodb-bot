@@ -47,14 +47,57 @@ Read `references/column-patterns.md` for the full matching rules. It covers thre
 2. **Units** — unit-to-field lookup when the name is ambiguous
 3. **Description text** — keyword scanning as a tiebreaker
 
-It also documents how to handle uncertainty columns (`_error`, `_error_upper`, `_error_lower`) and catch-all tables (`ModeledParameters`, `CompanionParameters`) for unmapped physical parameters.
-
-If a column remains unmatched after all three layers, prompt the user to either ignore it, assign it to an existing field, create a new field in an existing table, or add a new table to the schema. Give useful suggesstions. Flag unmatched columns clearly in the output.
+It also documents how to handle uncertainty columns (`_error`, `_error_upper`, `_error_lower`) and catch-all tables (`ModeledParameters`, `CompanionParameters`) for unmapped physical parameters. It also lists column types that commonly fall through all three layers (absolute magnitudes, generic URLs, quality flags) — see "Resolving Unmatched Columns" below for what to do with them.
 
 ## Photometry Filter IDs
 
 Read `references/photometry-filters.md` for the full rules on resolving band names to SVO Filter
 Profile Service IDs before populating `PhotometryFilters.band`.
+
+## Resolving Unmatched Columns
+
+After working through all three matching layers and the special cases in
+`references/column-patterns.md`, you'll often be left with a handful of columns that genuinely
+have nowhere to go in the current schema. Produce the mapping table and HTML file as usual,
+with these marked **Unmatched** — don't hold up the rest of the mapping while these get sorted
+out.
+
+Then, in the **same response**, ask the user about all Unmatched columns in one combined
+message — one question covering every unmatched column, not one per column. For each one, give:
+- The column name, description, and units
+- A short reason it didn't match (reuse the explanations from `column-patterns.md` where they
+  apply, e.g. "AstroDB only stores apparent magnitudes")
+- The options below, with a suggested default where one is obvious from the data
+
+**Options to offer for each unmatched column:**
+1. **Ignore it** — leave it out of the mapping (good for row numbers, internal flags, etc.)
+2. **Map to an existing field** — user names the `Table.field` it should go to
+3. **Add a new field to an existing table** — user picks the table; suggest a field name based
+   on the column name/description if you can
+4. **Add a new table** — user gives a short name and purpose for the table
+
+If the user doesn't engage with this question, that's fine — the output is already complete
+with these columns marked Unmatched, ready for them to revisit later.
+
+### Applying the user's decisions
+
+If the user does respond with choices, **update the existing mapping table and HTML file**
+(rewrite it with the `Write` tool) to replace each resolved column's row using these confidence
+levels (see "Confidence levels" under Output below):
+
+| User's choice | DB Table | DB Field | Confidence | Notes |
+|---|---|---|---|---|
+| Ignore | `—` | `—` | Ignored | Original reason it didn't match |
+| Map to existing field | user-given table | user-given field | User-assigned | Brief note |
+| Add new field | user-given existing table | proposed field name | Proposed (new field) | "Needs schema update — see Proposed Schema Additions" |
+| Add new table | proposed table name | proposed field name | Proposed (new table) | "Needs schema update — see Proposed Schema Additions" |
+
+For every "Add new field" or "Add new table" choice, also add a row to the **Proposed Schema
+Additions** section of the HTML output (see `references/html-output.md`). Keep this lightweight
+— the proposed table/field name plus unit and datatype (taken from the input column where
+known) and a short description is enough. Don't try to work out Felis-level details like
+nullability or primary keys here; that's what `astrodb-generate-schema` does next, using this
+proposal as its starting point.
 
 ## Output
 
@@ -66,11 +109,22 @@ As part of the HTML file, also generate a **Lookup Table Checklist** section —
 per lookup table that will need new entries before ingestion can proceed. See
 `references/html-output.md` for the visual spec and the rules for which lookup tables to check.
 
+If the "Resolving Unmatched Columns" step produced any "Add new field" or "Add new table"
+choices, also generate the **Proposed Schema Additions** section described in
+`references/html-output.md`.
+
 After writing the file, give a short plain-text summary in the chat (2–4 sentences) noting how
-many columns matched at each confidence level and flagging anything critical.
+many columns matched at each confidence level and flagging anything critical. If there are
+proposed schema additions, mention that running `astrodb-generate-schema` next can turn them
+into `schema.yaml` changes.
 Tell the user the file path to both the markdown table and the html file.  
 
 **Confidence levels:**
 - **High**: Name clearly matches a known pattern, or name + units together are unambiguous
 - **Medium**: Units or description match but name is generic; or name matches but units are unexpected
 - **Low**: Only a weak contextual signal; flagging as possible match with uncertainty
+- **Unmatched**: No field fits after all three layers — see "Resolving Unmatched Columns" above
+- **Ignored**: User chose to leave this column out of the mapping entirely (set when the user responds to the Unmatched prompt)
+- **User-assigned**: User specified the exact `Table.field` for this column (set when the user responds to the Unmatched prompt)
+- **Proposed (new field)**: User chose to add a new field to an existing table — needs a schema update before ingestion
+- **Proposed (new table)**: User chose to add a new table — needs a schema update before ingestion

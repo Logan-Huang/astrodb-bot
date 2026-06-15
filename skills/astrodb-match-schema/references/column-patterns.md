@@ -127,22 +127,25 @@ If a column clearly represents a physical quantity but doesn't fit any specific 
 - Fitted or modeled parameters (effective temperature `Teff`, luminosity `L`, mass `M`, radius `R`, surface gravity `logg`, metallicity `[Fe/H]`, age) → `ModeledParameters` (using the generic `value` + `unit` fields; put the parameter name in `parameter`)
 - Companion-derived measurements → `CompanionParameters`
 
-## Columns to mark Unmatched — ask the user
+## Columns that typically end up Unmatched
 
-For the following column types, mark as **Unmatched** in the output and explicitly ask the user
-what they want to do. Give a brief explanation of why, and suggest options:
+The following column types commonly fall through all three matching layers. When you reach the
+**Resolving Unmatched Columns** step in SKILL.md, use the explanation and suggested options
+below as the reason/suggestions for these columns in the combined prompt to the user — don't
+ask about them separately.
 
 **Absolute magnitude columns** (`H`, `absolute_magnitude`, `abs_mag`, `M_V`, `M_B`, etc. when
 clearly absolute and not apparent magnitude):
-AstroDB's `Photometry.magnitude` stores *apparent* magnitudes only. Options to offer: store in
-`ModeledParameters` (parameter="absolute_magnitude_<band>", unit="mag"), or skip.
+AstroDB's `Photometry.magnitude` stores *apparent* magnitudes only. Suggest adding a new field
+in `ModeledParameters` (parameter="absolute_magnitude_<band>", unit="mag"), or ignoring it.
 
 **Generic URL / link columns** (`url`, `link`, `webpage`, `nasa_link`, `href`, etc. that are not
 clearly spectrum access URLs):
-No direct AstroDB field. Options: store in `Sources.comments`, map to `Spectra.access_url` if
-the link points to a spectrum, or skip.
+No direct AstroDB field. Suggest mapping to the existing `Sources.comments` field, mapping to
+`Spectra.access_url` if the link points to a spectrum, or ignoring it.
 
 **Quality codes and observation flags** (`flag`, `flags`, `quality`, `qual`, `qflag`,
 `quality_code`, `f_flag`, numeric quality scores, etc.):
-No AstroDB field. Options: use for pre-ingestion row filtering (e.g. keep only quality=1 rows),
-store representative values in `Sources.comments`, or skip.
+No AstroDB field. Suggest using these for pre-ingestion row filtering (e.g. keep only
+quality=1 rows) and ignoring them for the schema mapping, or mapping representative values to
+the existing `Sources.comments` field.
