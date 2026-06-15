@@ -151,9 +151,9 @@ If there are 10 or more columns still missing descriptions or units, output the 
 
 ### Step 5: Output the results
 
-Create a new output directory next to the input file, named after the input file's base name with a `-parsed-data-table` suffix. **Do not overwrite an existing directory** — if the directory already exists, append `-1`, `-2`, etc. until a free name is found. For example, if the input is `data/catalog.fits`, create `data/catalog-parsed-data-table/` and save:
-- `data/catalog-parsed-data-table/catalog-parsed-data-table.md`
-- `data/catalog-parsed-data-table/catalog-parsed-data-table.html`
+Create a new output directory inside `tmp/`, named after the input file's base name with a `-parsed-data-table` suffix. **Do not overwrite an existing directory** — if the directory already exists, append `-1`, `-2`, etc. until a free name is found. For example, if the input is `data/catalog.fits`, create `tmp/catalog-parsed-data-table/` and save:
+- `tmp/catalog-parsed-data-table/catalog-parsed-data-table.md`
+- `tmp/catalog-parsed-data-table/catalog-parsed-data-table.html`
 
 Each file should begin with a metadata block:
 
