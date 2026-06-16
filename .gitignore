@@ -1,5 +1,5 @@
 # Skill workspace (testing/evaluation artifacts)
-.claude/skills/*-workspace/
+skills/*-workspace/
 .claire/
 
 # Agent folders
