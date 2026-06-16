@@ -66,7 +66,7 @@ Write a short Python script to:
 - Load the data file. First check for the sidecar written by astrodb-build-parse-table:
   ```python
   import json, os
-  sidecar = "tmp/astrodb-parse-result.json"
+  sidecar = "astrodb-build-artifacts/astrodb-parse-result.json"
   if os.path.exists(sidecar):
       meta = json.load(open(sidecar))
       reader      = meta["reader"]        # "astropy" or "pandas"
@@ -92,7 +92,7 @@ Write a short Python script to:
   - Count null/missing values: `np.sum(np.isnan(col))` for floats, `np.sum(col == None)` / masked array checks for strings. For FITS masked arrays, check `.mask` if present.
   - Get the column's numpy dtype
 
-Save the script to `tmp/validate_mapping.py` and run it to get the per-column null counts and dtypes.
+Save the script to `astrodb-build-artifacts/validate_mapping.py` and run it to get the per-column null counts and dtypes.
 
 ## Step 3: Produce the validation report
 

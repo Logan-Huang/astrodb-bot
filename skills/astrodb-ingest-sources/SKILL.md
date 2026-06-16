@@ -85,7 +85,7 @@ Example prompt to user:
 
 After confirmation, use the **input file name** (without extension) as `{REF}` to
 name the output script — e.g. `NearbyGalaxies_Jan2021_PUBLIC` →
-`tmp/ingest_NearbyGalaxies_Jan2021_PUBLIC_sources.py`. If the filename is very long,
+`astrodb-ingest-artifacts/ingest_NearbyGalaxies_Jan2021_PUBLIC_sources.py`. If the filename is very long,
 ask the user for a short label to use instead (e.g. `Burg24`).
 
 ### B. DB schema column names
@@ -114,7 +114,7 @@ print(db.metadata.tables["Sources"].columns.keys())
 
 ---
 
-## Step 3: Write `tmp/ingest_{REF}_sources.py`
+## Step 3: Write `astrodb-ingest-artifacts/ingest_{REF}_sources.py`
 
 Read `scripts/ingest_source.py` to understand the script pattern — variable names,
 structure, logging setup, and ingest loop. Then write a **tailored script**
@@ -133,7 +133,7 @@ Every variable must contain a real value — never write placeholder text to the
 
 ## Step 4: Run the script
 
-Run `tmp/ingest_{REF}_sources.py` with `SAVE_DB = False`. Report:
+Run `astrodb-ingest-artifacts/ingest_{REF}_sources.py` with `SAVE_DB = False`. Report:
 
 -  How many sources were ingested successfully
 - Any rows skipped with their warning messages

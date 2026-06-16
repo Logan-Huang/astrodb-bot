@@ -122,7 +122,7 @@ found, result = find_publication(db, doi=doi, bibcode=bibcode, reference=referen
 
 Report already-present references as "already present" — do not re-ingest.
 
-## Step 4: Write `tmp/ingest_{LABEL}_publications.py`
+## Step 4: Write `astrodb-ingest-artifacts/ingest_{LABEL}_publications.py`
 
 Read `scripts/ingest_publication.py` for the pattern, then write a **tailored** script
 (not a verbatim copy). It must:

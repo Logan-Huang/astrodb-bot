@@ -86,7 +86,7 @@ except Exception:
 # Write sidecar so downstream skills (e.g. astrodb-build-schema-match, astrodb-build-schema-validate)
 # can reuse the same reader without re-discovering the format.
 # Output file paths are added to the sidecar in Step 5.
-with open("tmp/astrodb-parse-result.json", "w") as f:
+with open("astrodb-build-artifacts/astrodb-parse-result.json", "w") as f:
     json.dump({
         "file_path": "$ARGUMENTS",
         "reader": reader,
@@ -151,9 +151,9 @@ If there are 10 or more columns still missing descriptions or units, output the 
 
 ### Step 5: Output the results
 
-Create a new output directory inside `tmp/`, named after the input file's base name with a `-parsed-data-table` suffix. **Do not overwrite an existing directory** — if the directory already exists, append `-1`, `-2`, etc. until a free name is found. For example, if the input is `data/catalog.fits`, create `tmp/catalog-parsed-data-table/` and save:
-- `tmp/catalog-parsed-data-table/catalog-parsed-data-table.md`
-- `tmp/catalog-parsed-data-table/catalog-parsed-data-table.html`
+Create a new output directory inside `astrodb-build-artifacts/`, named after the input file's base name with a `-parsed-data-table` suffix. **Do not overwrite an existing directory** — if the directory already exists, append `-1`, `-2`, etc. until a free name is found. For example, if the input is `data/catalog.fits`, create `astrodb-build-artifacts/catalog-parsed-data-table/` and save:
+- `astrodb-build-artifacts/catalog-parsed-data-table/catalog-parsed-data-table.md`
+- `astrodb-build-artifacts/catalog-parsed-data-table/catalog-parsed-data-table.html`
 
 Each file should begin with a metadata block:
 
@@ -185,13 +185,13 @@ After writing the output files, update the sidecar to record their paths:
 ```python
 import json
 
-with open("tmp/astrodb-parse-result.json") as f:
+with open("astrodb-build-artifacts/astrodb-parse-result.json") as f:
     sidecar = json.load(f)
 
 sidecar["output_md"] = "<path to .md file>"
 sidecar["output_html"] = "<path to .html file>"
 
-with open("tmp/astrodb-parse-result.json", "w") as f:
+with open("astrodb-build-artifacts/astrodb-parse-result.json", "w") as f:
     json.dump(sidecar, f)
 ```
 
