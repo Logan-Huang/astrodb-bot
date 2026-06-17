@@ -12,6 +12,14 @@ There is no application code to compile or run directly — the "code" is primar
 
 When skills are added, removed, renamed, or their conventions change, update this `CLAUDE.md` in the same session. In particular: skill names in the pipeline, artifact directory names, external dependencies, and the commands section.
 
+## Git Workflow
+
+At a natural stopping point — a skill is complete, a set of related changes is done, or the user says they're wrapping up — prompt the user to commit, push, and open a PR:
+
+> Ready to commit and push? I can stage the changed files, write a commit message, and open a pull request against `main`.
+
+Use a descriptive commit message that summarizes what changed (e.g. `add astrodb-ingest-sources skill` or `update schema-match references`). Always open PRs against `main`.
+
 ## After Making Changes
 
 When skills are added, removed, or significantly updated, remind the user to:
