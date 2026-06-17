@@ -2,6 +2,20 @@
 
 This file defines the visual design for the `tmp/schema-match-result.html` output file.
 
+## Two phases
+
+This file gets written up to twice per session:
+
+1. **Initial mapping** — written right after matching. Any column with nowhere to go is marked
+   **Unmatched** and listed in the Unmatched Columns section, alongside the question asked in
+   "Resolving Unmatched Columns" (SKILL.md).
+2. **After resolution** — if the user responds to that question, rewrite the file: move each
+   resolved column out of the Unmatched Columns section and into the main table with its new
+   confidence level (Ignored / User-assigned / Proposed (new field) / Proposed (new table)),
+   and add the Ignored Columns / Proposed Schema Additions sections as needed.
+
+If the user never responds, the initial file stands as the final output — that's fine.
+
 ---
 
 ## Page structure
@@ -18,10 +32,14 @@ This file defines the visual design for the `tmp/schema-match-result.html` outpu
 <h3> ParameterList  (if applicable)
 <table> one row per parameter
 ... (one <h3>+<table> per affected lookup table)
+<h2> Proposed Schema Additions  (after the user resolves "new field"/"new table" columns)
+<table> one row per proposed field
 <h2> Unit Conversions
 <table> one row per column that needs conversion
-<h2> Unmatched Columns
+<h2> Unmatched Columns  (columns not yet resolved by the user)
 <ul>  one item per unmatched column
+<h2> Ignored Columns  (columns the user chose to skip)
+<ul>  one item per ignored column
 <h2> Ingestion Notes
 <ul>  one item per issue (excluding unit conversions)
 ```
@@ -37,7 +55,7 @@ This file defines the visual design for the `tmp/schema-match-result.html` outpu
 | Units | Unit string | Plain, centered |
 | DB Table | AstroDB table name | Sans-serif, `font-weight:600`, prefixed with `→` to signal destination |
 | DB Field | AstroDB field name | `<code>` chip: `background:#e8f4e8`, same radius/padding as Input Column chip — green tint distinguishes it from the blue-gray input chip |
-| Confidence | Match confidence | Badge: `🟢 High` / `🟡 Medium` / `🔴 Low`, centered |
+| Confidence | Match confidence | Badge: `🟢 High` / `🟡 Medium` / `🔴 Low` / `⚫ Unmatched` / `🔵 User-assigned` / `🟣 Proposed (new field)` / `🟣 Proposed (new table)` / `⚪ Ignored`, centered |
 | Notes | Short explanation | Plain, smaller font |
 
 The visual contrast between the **blue-gray input chip** and the **green DB field chip** is the
@@ -53,6 +71,9 @@ primary way to distinguish raw source column names from AstroDB schema identifie
 | Medium | `#fffbea` (very light yellow) |
 | Low | `#fff3f0` (very light salmon) |
 | Unmatched | `#f5f5f5` (light gray); DB Table and DB Field cells show `—` |
+| User-assigned | `#f0fff0` (very light green) — same as High; the user confirmed this mapping directly |
+| Proposed (new field) / Proposed (new table) | `#f3ecfd` (very light purple) — signals a schema change is needed before ingestion |
+| Ignored | `#f5f5f5` (light gray); DB Table and DB Field cells show `—` |
 
 ---
 
@@ -68,16 +89,32 @@ This keeps column labels visible when scrolling a long table.
 Place a small legend above the table explaining:
 - Blue-gray chip = input column name (from source file)
 - Green chip = AstroDB field name (schema destination)
-- Row color = confidence level (green / yellow / salmon / gray)
+- Row color = confidence level (green = high/user-confirmed, yellow = medium, salmon = low,
+  purple = proposed schema addition, gray = unmatched/ignored)
 
 ---
 
 ## Unmatched Columns section
 
-`<h2>Unmatched Columns</h2>` followed by a `<ul>`. Each `<li>` should:
+Include this section in the **initial** write-up if at least one column was marked
+**Unmatched**. `<h2>Unmatched Columns</h2>` followed by a `<ul>`. Each `<li>` should:
 - Name the column (in a blue-gray input chip)
 - Briefly explain why it didn't match
-- Suggest whether `ModeledParameters` or `CompanionParameters` could accommodate it
+- Suggest the options from "Resolving Unmatched Columns" (SKILL.md), with a default where one
+  is obvious
+
+When the file is rewritten after the user responds, remove the columns they resolved from this
+section (and from this section entirely if none remain).
+
+---
+
+## Ignored Columns section
+
+Only include this section if at least one column was marked **Ignored** during "Resolving
+Unmatched Columns". `<h2>Ignored Columns</h2>` followed by a `<ul>`. Each `<li>` should:
+- Name the column (in a blue-gray input chip)
+- Briefly explain why it didn't match
+- Note that the user chose to leave it out of the mapping
 
 ---
 
@@ -134,6 +171,28 @@ italic gray text: `<em style="color:#aaa">unknown — fill in</em>`.
 Add a note below each mini-table if the entries likely already exist in the database
 (e.g. common bands like 2MASS J, H, K or well-known telescopes) and ingestion may only
 require verification rather than insertion.
+
+---
+
+## Proposed Schema Additions section
+
+Only include this section if "Resolving Unmatched Columns" produced at least one "Add new
+field" or "Add new table" choice. `<h2>Proposed Schema Additions</h2>` followed by an intro
+sentence: *"These columns need a schema update before they can be ingested. The
+astrodb-generate-schema skill can turn this table into schema.yaml changes."*
+
+Render a `<table>` with a light purple header (`background:#8e44ad`, white text) and one row
+per proposed field:
+
+| Input Column | Proposed Table | Proposed Field | Unit | Datatype | Description |
+|---|---|---|---|---|---|
+
+- For "Add new field" choices, **Proposed Table** is the existing table the user picked.
+- For "Add new table" choices, **Proposed Table** is the new table's name — repeat it for
+  every field that belongs to that new table so they read as a group.
+- **Unit** and **Datatype** come from the input column's Units/Type where available; leave the
+  cell as `<em style="color:#aaa">unknown — fill in</em>` if not.
+- **Description** can reuse the input column's description, lightly edited if needed.
 
 ---
 

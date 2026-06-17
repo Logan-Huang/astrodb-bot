@@ -1,0 +1,197 @@
+{
+  "skill_name": "astrodb-setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What's the first step to making a new astrodb?",
+      "expected_output": "Explains that the first step is to create your own GitHub repository from the astrodb-template (via 'Use this template' on https://github.com/astrodbtoolkit/astrodb-template-db) and provide its URL, and asks for a name for the database — suggesting the user reuse that name for the new repo too. Does not ask for or mention a data file — that comes in a later step.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "eval1_instructs_create_repo_from_template",
+          "text": "Instructs the user to create a new GitHub repository from the astrodb-template (e.g. 'Use this template' on astrodb-template-db) and to provide the new repo's URL"
+        },
+        {
+          "id": "eval1_asks_db_name",
+          "text": "Asks the user for a database name"
+        },
+        {
+          "id": "eval1_suggests_same_name",
+          "text": "Suggests or encourages using the same name for the GitHub repo as for the database"
+        },
+        {
+          "id": "eval1_no_datafile",
+          "text": "Does not ask for or reference a data file, parsing, or ingestion (that is a later step)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I made my repo from the template, it's at https://github.com/kelle/test-astrodb . Call the database BdSurvey and get it set up.",
+      "expected_output": "Clones https://github.com/kelle/test-astrodb right away without asking where to put it, verifies structure, updates db_name to 'BdSurvey', and tells the user the cloned directory is their project directory. At the end — after setup is complete — notes the repo/database name mismatch (test-astrodb vs BdSurvey), asks if they want to rename the repo on GitHub, and offers to run 'git remote set-url origin' with the new URL once they do. Optionally offers to rename the local directory too. Does not raise the mismatch before or during cloning.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "eval2_clones_repo",
+          "text": "Clones the provided repo URL (https://github.com/kelle/test-astrodb)"
+        },
+        {
+          "id": "eval2_no_directory_question",
+          "text": "Does not ask the user where to clone the repo or what directory/working directory to use before cloning"
+        },
+        {
+          "id": "eval2_verifies_structure",
+          "text": "Verifies the cloned repo has the template directory structure: a data/ directory, a database.toml file, and a schema.yaml file"
+        },
+        {
+          "id": "eval2_updates_db_name",
+          "text": "Updates database.toml so db_name is set to the user-provided name (BdSurvey)"
+        },
+        {
+          "id": "eval2_asks_readme_description",
+          "text": "After cloning and updating db_name, asks the user for a description of their database to use in the README"
+        },
+        {
+          "id": "eval2_updates_readme",
+          "text": "Updates README.md: replaces the template title (astrodb-template-db) with the database name (BdSurvey) and replaces the generic description with the user-provided one"
+        },
+        {
+          "id": "eval2_mentions_project_dir_after",
+          "text": "In the wrap-up, tells the user the cloned repo directory is now their project directory for the next steps"
+        },
+        {
+          "id": "eval2_mismatch_raised_at_end",
+          "text": "After setup is complete, notes the repo/database name mismatch (test-astrodb vs BdSurvey) and asks if the user wants to rename the repo"
+        },
+        {
+          "id": "eval2_offers_remote_fix",
+          "text": "Offers to run 'git remote set-url origin' with the new URL once the user renames the repo on GitHub"
+        },
+        {
+          "id": "eval2_no_mismatch_before_clone",
+          "text": "Does not raise the name mismatch before or during cloning — only raises it at the end"
+        },
+        {
+          "id": "eval2_no_datafile",
+          "text": "Does not ask for or handle a data file"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Set up a new astrodb database called NearbyGalaxies.",
+      "expected_output": "Notes the database name (NearbyGalaxies) and, because no repo URL was given, asks the user to create a repo from the astrodb-template ('Use this template') and provide its URL before cloning — suggesting the new repo be named NearbyGalaxies (or something close) to match the database. Does not invent a repo URL or fabricate a clone.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "eval3_asks_for_repo_url",
+          "text": "Asks the user to create a repo from the astrodb-template and provide its URL before cloning"
+        },
+        {
+          "id": "eval3_suggests_same_name",
+          "text": "Suggests naming the new GitHub repo NearbyGalaxies, or something close to it, to match the database name"
+        },
+        {
+          "id": "eval3_no_fabricated_url",
+          "text": "Does not invent a repo URL or clone an arbitrary repository"
+        },
+        {
+          "id": "eval3_no_datafile",
+          "text": "Does not ask for or reference a data file"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I want to start a new astrodb for my study of M dwarf flares. Let's call the database MdwarfFlares.",
+      "expected_output": "Acknowledges the database name (MdwarfFlares), suggests the user give their new GitHub repo the same (or a closely matching) name, and walks them through creating a repo from the astrodb-template and sending its URL — without inventing a URL, cloning anything, or asking about a data file yet.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "eval4_acknowledges_db_name",
+          "text": "Acknowledges or confirms the database will be named MdwarfFlares"
+        },
+        {
+          "id": "eval4_suggests_same_repo_name",
+          "text": "Suggests or recommends naming the new GitHub repo the same as, or closely matching, MdwarfFlares"
+        },
+        {
+          "id": "eval4_explains_repo_creation",
+          "text": "Explains how to create a repo from the astrodb-template (e.g. 'Use this template' on astrodb-template-db) and asks for its URL"
+        },
+        {
+          "id": "eval4_no_fabricated_clone",
+          "text": "Does not invent a repo URL or attempt to clone anything"
+        },
+        {
+          "id": "eval4_no_datafile",
+          "text": "Does not ask for or reference a data file"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Here's my repo for a new astrodb: https://github.com/kelle/test-astrodb . Can you set it up?",
+      "expected_output": "Clones https://github.com/kelle/test-astrodb right away without asking where to put it or what working directory/folder to use, verifies the template structure, then asks for a database name (since none was given). When asking, suggests the user consider naming the database to match the repo (test-astrodb / TestAstrodb) or notes that if they pick a different name they may want to rename the repo. Sets db_name once the name is provided, and in the final wrap-up tells the user the cloned repo directory is now their project directory for next steps.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "eval5_no_directory_question_before_clone",
+          "text": "Does not ask the user where to clone the repo, what directory to use, or what their working directory should be before running git clone"
+        },
+        {
+          "id": "eval5_clones_repo",
+          "text": "Clones https://github.com/kelle/test-astrodb"
+        },
+        {
+          "id": "eval5_asks_db_name",
+          "text": "Asks the user for a database name, since none was provided in the prompt"
+        },
+        {
+          "id": "eval5_suggests_name_alignment",
+          "text": "When asking for the database name, suggests aligning it with the repo name (test-astrodb) or notes the option to rename the repo to match whatever name they choose"
+        },
+        {
+          "id": "eval5_asks_readme_description",
+          "text": "After cloning and updating db_name, asks the user for a description of their database to use in the README"
+        },
+        {
+          "id": "eval5_mentions_project_dir_after",
+          "text": "In the wrap-up (after cloning), tells the user the cloned repo directory is now their project directory for subsequent steps"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I want to set up a new astrodb called BrownDwarfs. My repo is https://github.com/kelle/test-astrodb . It's a catalog of nearby brown dwarf systems with spectral types, photometry, and parallaxes — for studying the L/T transition.",
+      "expected_output": "Clones https://github.com/kelle/test-astrodb without asking where to put it, verifies the template structure, updates database.toml so db_name is BrownDwarfs. For the README step, uses the description the user already provided ('a catalog of nearby brown dwarf systems with spectral types, photometry, and parallaxes — for studying the L/T transition') — or something very close — to update the README title and description without re-asking. Shows or confirms what was changed in the README. In the wrap-up, tells the user the repo directory is their project directory and points to the next step.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "eval6_clones_repo",
+          "text": "Clones https://github.com/kelle/test-astrodb without asking where to put it"
+        },
+        {
+          "id": "eval6_updates_db_name",
+          "text": "Updates database.toml so db_name is set to BrownDwarfs"
+        },
+        {
+          "id": "eval6_updates_readme_title",
+          "text": "Updates README.md: replaces the template title (astrodb-template-db) with BrownDwarfs"
+        },
+        {
+          "id": "eval6_updates_readme_description",
+          "text": "Updates README.md description to reflect the brown dwarf / L-T transition science the user described — does not leave the generic 'A template schema for astronomical databases' text"
+        },
+        {
+          "id": "eval6_no_redundant_description_ask",
+          "text": "Does not ask the user to re-describe their database — the description was already given in the prompt"
+        },
+        {
+          "id": "eval6_mentions_project_dir_after",
+          "text": "In the wrap-up, tells the user the cloned repo directory is now their project directory for subsequent steps"
+        }
+      ]
+    }
+  ]
+}

@@ -3,14 +3,14 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Parse this data table file and extract column information: 'data/NearbyGalaxies_Jan2021_PUBLIC (1).fits'",
+      "prompt": "Parse this data table file and extract column information: 'data/NearbyGalaxies_Jan2021_PUBLIC.fits'",
       "expected_output": "A markdown table with 49 columns showing name, description, units, and type. Descriptions should be populated for most columns (sourced from FITS TCOMMn headers or embedded VOTable XML). Units are not stored in the file but should be inferred from column names and descriptions (e.g. velocity columns → km/s, magnitudes → mag, proper motions → mas/yr, ellipticity → dimensionless_unscaled).",
-      "files": ["data/NearbyGalaxies_Jan2021_PUBLIC (1).fits"],
+      "files": ["data/NearbyGalaxies_Jan2021_PUBLIC.fits"],
       "assertions": [
         {
           "text": "Output contains a markdown table with Column, Description, Units, and Type headers",
           "passed": true,
-          "evidence": "Table written to NearbyGalaxies_Jan2021_PUBLIC (1)-parsed-data-table.md with | Column | Description | Units | Type | headers"
+          "evidence": "Table written to NearbyGalaxies_Jan2021_PUBLIC-parsed-data-table.md with | Column | Description | Units | Type | headers"
         },
         {
           "text": "Output contains all 49 column names from the FITS file",
