@@ -17,7 +17,7 @@ jobs:
           TAG="${{ github.event.release.tag_name }}"
           VERSION="${TAG#v}"
           sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: bump version to ${{ github.event.release.tag_name }}"
           file_pattern: pyproject.toml
