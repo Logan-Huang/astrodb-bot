@@ -78,7 +78,21 @@ If any of the three is missing, the repo probably wasn't created from the astrod
 user what's absent and have them confirm they used **Use this template** on astrodb-template-db before
 going on.
 
-## Step 4: Set the database name in database.toml
+## Step 4: Remove generated schema representations from the template
+
+The template ships with pre-generated schema files that reflect the *template* schema, not the user's
+new database. Delete them now so they don't mislead anyone and so they can be regenerated fresh once
+the user's real schema is in place:
+
+```bash
+rm -f <repo-dir>/schema_erd.png
+rm -f <repo-dir>/docs/schema/*.md
+```
+
+Both removals are safe even if the files don't exist (`-f` suppresses errors). Don't skip this step —
+leaving these stale files in place is the bug this step fixes.
+
+## Step 5: Set the database name in database.toml
 
 Update the cloned `database.toml` so `db_name` is the name from Step 1. It ships as
 `db_name = "astrodb-template"`; change only that value and leave the rest of the file (and the trailing
@@ -92,7 +106,7 @@ grep '^db_name' <repo-dir>/database.toml   # confirm it now reads the user's nam
 Editing the line by hand is fine too — the point is that `db_name` ends up matching the user's chosen
 name.
 
-## Step 5: Update the README
+## Step 6: Update the README
 
 The cloned repo still has the template's generic README. Now that the database has a name and the user
 knows what it's for, it's a good moment to make the README theirs.
@@ -129,10 +143,16 @@ After editing, confirm with a brief summary:
 Also confirm that the user did not delete the credit line at the bottom of the README that acknowledges the AstroDB Toolkit and template: 
 This repository is based on the [astrodb-template](https://github.com/astrodbtoolkit/astrodb-template-db) template repository, which is part of the [AstroDB Toolkit](https://github.com/astrodbtoolkit).
 
-If the user skips this step or says "later" or "skip it," that's fine — just move on to Step 6 without
-pressing.
+If the user skips this step or says "later" or "skip it," replace the template placeholder text with
+generic placeholders so the README doesn't still read as the template:
 
-## Step 6: Update the LICENSE
+1. **Title line** (line 1): replace `astrodb-template-db` with `[Database name]`
+2. **Description line**: replace `A template schema for astronomical databases.` with
+   `[Add a brief description of this database here.]`
+
+Then move on to Step 7 without pressing further.
+
+## Step 7: Update the LICENSE
 
 The cloned repo's `LICENSE` (BSD 3-Clause) still carries the template authors' copyright — the people who
 wrote the AstroDB template, not whoever now owns this database. Like the README, this is the moment to
@@ -164,7 +184,7 @@ Act on their answer with the `Edit` tool (not `sed`), leaving the rest of the fi
 
 If the user says "skip," "later," or "leave it," that's fine — move on to Step 7 without pressing.
 
-## Step 7: Confirm, and point to what's next
+## Step 8: Confirm, and point to what's next
 
 Tell the user the scaffold is ready: where the repo was cloned, that the structure checks out, and that
 `db_name` is set (along with any README and LICENSE edits they made). This is also the natural point to

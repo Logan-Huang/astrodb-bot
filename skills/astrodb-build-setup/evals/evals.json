@@ -44,6 +44,14 @@
           "text": "Verifies the cloned repo has the template directory structure: a data/ directory, a database.toml file, and a schema.yaml file"
         },
         {
+          "id": "eval2_removes_schema_erd",
+          "text": "Removes schema_erd.png from the cloned repo"
+        },
+        {
+          "id": "eval2_removes_docs_schema_md",
+          "text": "Removes the .md files in docs/schema/ from the cloned repo"
+        },
+        {
           "id": "eval2_updates_db_name",
           "text": "Updates database.toml so db_name is set to the user-provided name (BdSurvey)"
         },
