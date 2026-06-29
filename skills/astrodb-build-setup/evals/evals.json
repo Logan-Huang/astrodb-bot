@@ -28,7 +28,7 @@
     {
       "id": 2,
       "prompt": "I made my repo from the template, it's at https://github.com/kelle/test-astrodb . Call the database BdSurvey and get it set up.",
-      "expected_output": "Clones https://github.com/kelle/test-astrodb right away without asking where to put it, verifies structure, updates db_name to 'BdSurvey', and tells the user the cloned directory is their project directory. At the end — after setup is complete — notes the repo/database name mismatch (test-astrodb vs BdSurvey), asks if they want to rename the repo on GitHub, and offers to run 'git remote set-url origin' with the new URL once they do. Optionally offers to rename the local directory too. Does not raise the mismatch before or during cloning.",
+      "expected_output": "Clones https://github.com/kelle/test-astrodb right away without asking where to put it, verifies structure, updates db_name to 'BdSurvey', personalizes the README and CLAUDE.md so they describe the BdSurvey database instead of the template, and tells the user the cloned directory is their project directory. At the end — after setup is complete — notes the repo/database name mismatch (test-astrodb vs BdSurvey), asks if they want to rename the repo on GitHub, and offers to run 'git remote set-url origin' with the new URL once they do. Optionally offers to rename the local directory too. Does not raise the mismatch before or during cloning.",
       "files": [],
       "assertions": [
         {
@@ -54,6 +54,10 @@
         {
           "id": "eval2_updates_readme",
           "text": "Updates README.md: replaces the template title (astrodb-template-db) with the database name (BdSurvey) and replaces the generic description with the user-provided one"
+        },
+        {
+          "id": "eval2_updates_claudemd",
+          "text": "Updates CLAUDE.md so it describes the BdSurvey database instead of the template — rewrites the 'What this is' framing away from 'a template schema for astronomical databases', reusing the database name and description rather than re-asking for them"
         },
         {
           "id": "eval2_mentions_project_dir_after",
@@ -164,7 +168,7 @@
     {
       "id": 6,
       "prompt": "I want to set up a new astrodb called BrownDwarfs. My repo is https://github.com/kelle/test-astrodb . It's a catalog of nearby brown dwarf systems with spectral types, photometry, and parallaxes — for studying the L/T transition.",
-      "expected_output": "Clones https://github.com/kelle/test-astrodb without asking where to put it, verifies the template structure, updates database.toml so db_name is BrownDwarfs. For the README step, uses the description the user already provided ('a catalog of nearby brown dwarf systems with spectral types, photometry, and parallaxes — for studying the L/T transition') — or something very close — to update the README title and description without re-asking. Shows or confirms what was changed in the README. In the wrap-up, tells the user the repo directory is their project directory and points to the next step.",
+      "expected_output": "Clones https://github.com/kelle/test-astrodb without asking where to put it, verifies the template structure, updates database.toml so db_name is BrownDwarfs. For the README step, uses the description the user already provided ('a catalog of nearby brown dwarf systems with spectral types, photometry, and parallaxes — for studying the L/T transition') — or something very close — to update the README title and description without re-asking. Shows or confirms what was changed in the README. It also retargets CLAUDE.md to describe BrownDwarfs as the database (not the template), reusing the same description. In the wrap-up, tells the user the repo directory is their project directory and points to the next step.",
       "files": [],
       "assertions": [
         {
@@ -182,6 +186,10 @@
         {
           "id": "eval6_updates_readme_description",
           "text": "Updates README.md description to reflect the brown dwarf / L-T transition science the user described — does not leave the generic 'A template schema for astronomical databases' text"
+        },
+        {
+          "id": "eval6_updates_claudemd",
+          "text": "Updates CLAUDE.md to describe BrownDwarfs as the database rather than the template, reflecting the brown dwarf / L-T transition science, without re-asking for the description"
         },
         {
           "id": "eval6_no_redundant_description_ask",

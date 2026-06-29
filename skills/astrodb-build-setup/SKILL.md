@@ -40,7 +40,7 @@ to — cleaner than forking or copying files by hand.
 
 The same-name suggestion is a nice-to-have, not a gate: if the user already made their repo under a
 different name, or gives you both the database name and repo URL in one message, just take both and move
-on. Don't mention the mismatch upfront — wait until Step 5 (after setup is complete) to raise it.
+on. Don't mention the mismatch upfront — wait until the final wrap-up step (after setup is complete) to raise it.
 
 Hold on to the database name for Step 4. Wait until you have a repo URL before continuing to Step 2; if
 the user hasn't made the repo yet, walk them through the three steps above and pause until they do.
@@ -132,7 +132,48 @@ This repository is based on the [astrodb-template](https://github.com/astrodbtoo
 If the user skips this step or says "later" or "skip it," that's fine — just move on to Step 6 without
 pressing.
 
-## Step 6: Confirm, and point to what's next
+## Step 6: Personalize CLAUDE.md
+
+The clone also carries the template's `CLAUDE.md` — the file Claude Code reads for context when working in
+this repo. It still describes the *template* ("A template schema for astronomical databases… Downstream
+users fork this repo as a starting point"), which is misleading now that this repo is the user's own named
+database. Retarget it so future agent sessions know they're working on **this** database.
+
+Reuse what you already have — the name from Step 1 and the description from Step 5. **Don't ask for the
+description again**; if the user skipped it in Step 5, proceed without one here too.
+
+Read `<repo-dir>/CLAUDE.md` first, then make two changes with the `Edit` tool. Leave every other section
+(Git and GitHub, Documentation, Commands, Architecture) intact — they're still accurate for a database built
+from this template:
+
+1. **Rewrite the "What this is" section** so it describes the actual database rather than the template: lead
+   with the name and the user's description, and note it was created from the astrodb-template-db. For
+   example:
+
+   > ## What this is
+   >
+   > **`<new-name>`** — <user's description>. An astronomical database built with the
+   > [AstroDB Toolkit](https://github.com/astrodbtoolkit), created from the
+   > [astrodb-template-db](https://github.com/astrodbtoolkit/astrodb-template-db) template. The repo holds
+   > the schema (`schema.yaml`), the data (JSON under `data/`), and the tests that validate them.
+
+   If the user gave no description, use just the name and a neutral phrase like "an astronomical database
+   built with the AstroDB Toolkit."
+
+2. **Retarget the built-database filename.** Change `astrodb-template.sqlite` → `<new-name>.sqlite` (it
+   appears in the Commands and Architecture sections) so they name the right file. Leave `astrodb-template-db`
+   — the upstream template repo — unchanged: it's a correct provenance reference, not something to rename.
+   (That `.sqlite` file isn't built until the create-db step — this just keeps the references matching
+   `db_name`.)
+
+Then confirm briefly:
+
+> CLAUDE.md now describes `<new-name>` as your database instead of the template, so future Claude Code
+> sessions in this repo start with the right context.
+
+If the user wants to skip this, that's fine — move on to Step 7.
+
+## Step 7: Confirm, and point to what's next
 
 Tell the user the scaffold is ready: where the repo was cloned, that the structure checks out, and that
 `db_name` is set. This is also the natural point to bring up `<repo-dir>` as their project directory going
