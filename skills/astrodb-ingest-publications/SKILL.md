@@ -1,6 +1,6 @@
 ---
 name: astrodb-ingest-publications
-description: "Generate and run a Python script that adds publications (references/citations) to an AstroDB Publications lookup table. Use this skill when the user says: ingest a publication, add a paper/reference/citation, populate the Publications table, 'add this DOI/bibcode', or names a paper by author+year (e.g. 'add Cruz et al. 2003') even when NO DOI is given. Also use to backfill or complete missing metadata (bibcode, DOI, description) for reference shortnames that ALREADY exist in a Publications table but are blank — e.g. 'look at Publications and fill everything out'. Also use when a data table's discovery references are missing from Publications and must be added before sources/photometry/spectra can be ingested. Handles a single paper, a batch of references from a table column, or backfilling an existing table — including the common case where the user has only a reference shortname or author+year and the paper must first be looked up online. Works standalone or as the prerequisite step before ingest-sources."
+description: "Generate and run a Python script that adds publications (references/citations) to an AstroDB Publications lookup table using astrodb_utils. Use this skill when the user says: ingest a publication, add a paper/reference/citation, populate the Publications table, 'add this DOI/bibcode', or names a paper by author+year (e.g. 'add Cruz et al. 2003') even when NO DOI is given. Also use to backfill blank bibcode/DOI/description for reference shortnames that already exist in Publications ('look at Publications and fill everything out'), or to add a data table's discovery references before sources/photometry/spectra can be ingested. Handles a single paper, a batch from a file column, or a backfill. Works standalone or as the prerequisite before ingest-sources."
 compatibility: python, astrodb_utils
 ---
 
@@ -67,27 +67,20 @@ shortname / author+year  ──(Google Scholar / NASA ADS / Crossref)──►  
 ambiguous — there may be many "Cruz 2003" papers across different topics. A row written
 from the wrong paper is worse than an empty one. Always resolve and verify first.
 
-## Prerequisites
+## Prerequisites & Inputs
 
-1. **The database.** Either a `database.toml` (astrodb-template-db JSON layout) or a
-   standalone `.sqlite` file. For `database.toml`, check: (1) a path the user stated,
-   (2) the project root, (3) otherwise ask — do not invent one.
-2. **Package**: `astrodb_utils`.
-3. **ADS token (recommended)** — lets `ingest_publication` auto-fill `bibcode`/`description`
+1. **The reference(s) to ingest** — one of: a shortname (`Cruz03`), author+year
+   (`Cruz et al. 2003`), DOI, ADS bibcode, or a data file whose reference column lists
+   shortnames.
+2. **The database** — either a `database.toml` (astrodb-template-db JSON layout) or a
+   standalone `.sqlite` file. Locate it in order: (1) a path the user explicitly stated,
+   (2) the current working directory / project root, (3) otherwise ask — do not invent one.
+3. **Package**: `astrodb_utils`.
+4. **ADS token (recommended)** — lets `ingest_publication` auto-fill `bibcode`/`description`
    from a DOI. Check with `from astrodb_utils.publications import check_ads_token; check_ads_token()`.
    If missing, offer to set it up (see the API reference) or proceed with `ignore_ads=True`
    and hand-supplied metadata.
-4. **Internet** — needed for the paper lookup step and for ADS queries.
-
-## Required Inputs
-
-1. The reference(s) to ingest — one of: a shortname (`Cruz03`), author+year
-   (`Cruz et al. 2003`), DOI, ADS bibcode, or a data file whose reference column
-   lists shortnames.
-2. Path to `database.toml` or the `.sqlite` file — check in order:
-   1. A path the user explicitly stated
-   2. `database.toml` / `.sqlite` in the current working directory
-   3. If not found, ask the user before continuing
+5. **Internet** — needed for the paper lookup step and for ADS queries.
 
 ---
 

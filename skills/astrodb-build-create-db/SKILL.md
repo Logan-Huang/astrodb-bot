@@ -1,6 +1,6 @@
 ---
 name: astrodb-build-create-db
-description: Create an empty SQLite AstroDB database from a Felis-validated schema.yaml, following the astrodb-template-db file structure. Use this skill whenever the user wants to create a database, initialize a SQLite database, build an AstroDB, or has just finished generating a Felis schema and wants to turn it into a working database. Always trigger after astrodb-build-schema-generate completes, or when the user says "create database", "make database", "initialize database", "create sqlite", "make sqlite", "build the database", "create astrodb", "initialize astrodb", or "set up the database". Do NOT skip this skill just because a schema.yaml already exists — this skill is exactly what handles that case.
+description: Create an empty SQLite AstroDB database from a Felis-validated schema.yaml, following the astrodb-template-db file structure. Use this skill whenever the user wants to create, initialize, or build a database, sqlite, or AstroDB, or has just finished generating a Felis schema and wants to turn it into a working database. Always trigger after astrodb-build-schema-generate completes, or when the user says "create database", "make database", "initialize database", "create sqlite", "make sqlite", "build the database", "create astrodb", "initialize astrodb", or "set up the database". Do NOT skip this skill just because a schema.yaml already exists — this skill is exactly what handles that case.
 compatibility: python, astrodbkit, felis
 ---
 

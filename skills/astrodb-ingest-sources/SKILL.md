@@ -12,29 +12,23 @@ table of an AstroDB SQLite database using `astrodb_utils.sources.ingest_source`.
 Read `references/ingest_source_api.md` before starting — it has the full signature,
 parameter meanings, and common warnings with fixes.
 
-## Prerequisites
+## Prerequisites & Inputs
 
-1. **`database.toml`** (astrodb-template-db layout) — this file is required to load the
-   database. Check for it in this order:
+1. **Data table** — path to a FITS, CSV, ECSV, or any astropy-readable file, with at minimum
+   a source name column and a discovery reference column.
+2. **`database.toml`** (astrodb-template-db layout) — required to load the database. Locate it
+   in order:
    1. A path the user explicitly stated in the conversation
-   2. `database.toml` in the current working directory
-   3. **If not found, stop and ask the user to provide it before continuing.**
-      Do not attempt to build the database without it.
-2. **Packages**: `astrodb_utils`, `astropy`, `astroquery`
-3. **Data table**: FITS, CSV, ECSV, or any astropy-readable format, with at minimum a source name column and a discovery reference column.
+   2. `database.toml` in the current working directory (root of the project)
+   3. **If not found, stop and ask the user to provide it before continuing** — do not
+      attempt to build the database without it.
+3. **Packages**: `astrodb_utils`, `astropy`, `astroquery`
 4. **Publications table populated**: every `reference` value must already exist in
    `Publications`. If any reference is missing, **offer to run `ingest_publication`
    as a sub-step** before proceeding with source ingestion — do not just tell the user
    to do it manually and stop.
 5. **Internet (recommended)**: `ingest_source` queries SIMBAD for coordinates when
    RA/Dec are not in the table.
-
-## Required Inputs
-1. Path to the data table file (CSV, ECSV, FITS, etc.)
-2. Path to `database.toml` — check in order:
-   1. A path the user explicitly stated in the conversation
-   2. `database.toml` in the current working directory (root of the project)
-   3. If not found, ask the user for the path before continuing
 
 ---
 
