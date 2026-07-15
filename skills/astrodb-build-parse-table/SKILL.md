@@ -14,7 +14,7 @@ Parse the data table file `$ARGUMENTS` and extract column information.
 
 **All outputs from this skill must be written inside a folder named `astrodb-build-artifacts/` in the current working directory.** Create this folder before writing any files.
 
-### Step 0: Create the artifact folder
+### Step 0: Create the artifact folder and check for a directions document
 
 Run this before anything else:
 
@@ -23,6 +23,22 @@ mkdir -p astrodb-build-artifacts
 ```
 
 If this fails, stop and tell the user you cannot create the output directory.
+
+Now look for a **directions document** — the user's own notes on this dataset (columns to skip, how to
+handle edge cases, schema decisions already made). Where it comes from depends on what the user gave
+you, so work through these in order and stop at the first hit:
+
+1. **The user provided a path** (e.g. in their opening message). Read it, then copy it to
+   `astrodb-build-artifacts/directions.md` so later skills — and later runs of this one — pick it up
+   without the user having to re-supply the path every time.
+2. **`astrodb-build-artifacts/directions.md` already exists** from a prior run. Read it as-is; it's
+   already in its canonical home, so there's nothing to copy.
+3. **Neither.** Proceed without one. It's optional, so don't stop to ask for it.
+
+When you do find one, let its guidance override the default heuristics in this skill. The user wrote it
+precisely because they know something about this data that the general rules don't capture — a column
+that looks like photometry but isn't, a unit that's mislabeled upstream. Silently applying the defaults
+over an explicit instruction is the failure this lookup exists to prevent.
 
 ### Step 1: Make sure Python is installed and the necessary libraries are available
 
