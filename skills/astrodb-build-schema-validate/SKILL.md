@@ -126,12 +126,9 @@ to `astrodb-build-artifacts/schema-validation-report.md` with the Write tool —
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-build-artifacts/astrodb-build-schema-validate-checklist.md` when you started and ticked items
-with evidence as you went. Before telling the user validation is done, read that file back — any
-unchecked box means you are not done (finish it, or record the user's explicit waiver) — then reproduce
-the evidence-annotated checklist here.
+Before telling the user validation is done, verify every item against its checklist file and reproduce
+the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`.
 
 - [ ] You had the mapping table, the data file path, and the schema.yaml path — asking the user for any that were missing rather than guessing.
 - [ ] You parsed schema.yaml for each field's datatype, nullable flag, and length.

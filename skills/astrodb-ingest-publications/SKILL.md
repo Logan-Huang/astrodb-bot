@@ -230,12 +230,9 @@ before saving.
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-ingest-artifacts/astrodb-ingest-publications-checklist.md` when you started and ticked items
-with evidence as you went. Before telling the user publications are ingested, read that file back — any
-unchecked box means you are not done (finish it, or record the user's explicit confirmation to skip) —
-then reproduce the evidence-annotated checklist here.
+Before telling the user publications are ingested, verify every item against its checklist file and
+reproduce the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`.
 
 - [ ] The database was located — a `database.toml` or standalone `.sqlite` the user pointed you to or that you found in the project root; you asked rather than inventing a path when it wasn't found.
 - [ ] You checked for an ADS token with `check_ads_token()`; if it was missing, you offered to set it up or proceeded with `ignore_ads=True` and hand-supplied metadata.

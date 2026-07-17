@@ -193,12 +193,9 @@ proposed, and any decisions made without `astrodb-build-artifacts/directions.md`
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-build-artifacts/astrodb-build-schema-match-checklist.md` when you started and ticked items with
-evidence as you went. Before telling the user the mapping is done, read that file back — any unchecked
-box means you are not done (finish it, or record the user's explicit waiver) — then reproduce the
-evidence-annotated checklist here.
+Before telling the user the mapping is done, verify every item against its checklist file and reproduce
+the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`.
 
 - [ ] If the input was a raw data file path rather than an already-parsed mapping table, you ran `astrodb-build-parse-table` on it first and worked from its output.
 - [ ] You read `references/schema.md` before mapping, and applied all three matching layers — name patterns, units (normalizing astropy's spaced forms like `km / s` to their compact equivalents), and description — plus the special-case rules in `references/column-patterns.md`. Any directions-document guidance was honored over the default heuristics.

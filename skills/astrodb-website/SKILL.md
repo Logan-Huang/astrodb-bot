@@ -129,12 +129,9 @@ Notify the user that their next step should be to set up a permanent hosting sol
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-build-artifacts/astrodb-website-checklist.md` when you started and ticked items with evidence
-as you went. Before telling the user the website is ready, read that file back — any unchecked box means
-you are not done (finish it, or record the user's explicit waiver) — then reproduce the
-evidence-annotated checklist here.
+Before telling the user the website is ready, verify every item against its checklist file and reproduce
+the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`.
 
 - [ ] The user created their own repo from the astrodb-web template and gave you the URL; you cloned it into the directory they confirmed (default `website/`).
 - [ ] You verified the primary table name and the RA/Dec/source/foreign-key column names against the actual database (`sqlite3 .tables` and `PRAGMA table_info`), rather than assuming defaults.

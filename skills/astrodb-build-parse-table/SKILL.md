@@ -259,12 +259,9 @@ and any columns still missing metadata.
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-build-artifacts/astrodb-build-parse-table-checklist.md` when you started and ticked items with
-evidence as you went. Before telling the user the table is parsed, read that file back — any unchecked
-box means you are not done (finish it, or record the user's explicit waiver) — then reproduce the
-evidence-annotated checklist here. Don't claim a value you didn't actually extract.
+Before telling the user the table is parsed, verify every item against its checklist file and reproduce
+the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`. Don't claim a value you didn't actually extract.
 
 - [ ] Descriptions were extracted using the format-specific methods in `references/format-specific-metadata.md` — not taken from what Step 2 printed (which is only reliable for ECSV and CDS/MRT).
 - [ ] For a `.txt`/`.dat` input, you checked for the `Byte-by-byte Description of file` MRT signature before treating it as plain CSV.

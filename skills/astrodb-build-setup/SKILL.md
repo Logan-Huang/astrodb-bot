@@ -417,13 +417,9 @@ document was completed now or deferred. Subsequent skills will append to this fi
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-build-artifacts/astrodb-build-setup-checklist.md` once the repo was in place and ticked items
-with evidence as you went. Before telling the user setup is complete, read that file back — any unchecked
-box means you are not done (finish it, or record the user's explicit waiver) — then reproduce the
-evidence-annotated checklist here. Never tick a box by inventing a value (e.g. a name the user never
-gave) or by claiming a check you didn't actually run.
+Before telling the user setup is complete, verify every item against its checklist file and reproduce
+the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`.
 
 Where an item says "asked", reading the answer out of the directions document counts — that's the point
 of the document. What doesn't count is neither asking nor finding it written down.

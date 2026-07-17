@@ -181,12 +181,9 @@ Fix the errors, rewrite the file, and re-run validation. Repeat until the schema
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-build-artifacts/astrodb-build-schema-generate-checklist.md` when you started and ticked items
-with evidence as you went. Before telling the user the schema is generated, read that file back — any
-unchecked box means you are not done (finish it, or record the user's explicit waiver) — then reproduce
-the evidence-annotated checklist here.
+Before telling the user the schema is generated, verify every item against its checklist file and
+reproduce the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`.
 
 - [ ] The schema name was confirmed with the user (Step 0) and is a real dataset name — never `astrodb_template`/`template` — matching the `name:` and `@id:` written into the file.
 - [ ] Unmatched and (if a validation report was provided) problematic columns were audited and raised with the user — one question per category — or there were none. If no validation report was provided, you noted the schema was generated without null/type checks and suggested validating before ingesting.

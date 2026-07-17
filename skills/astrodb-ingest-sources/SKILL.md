@@ -237,12 +237,9 @@ After a successful dry run, ask the user:
 
 ## Completion Checklist
 
-Track this checklist as a file per the **completion-checklist convention** in
-`references/astrodb-directions.md`: you copied it to
-`astrodb-ingest-artifacts/astrodb-ingest-sources-checklist.md` when you started and ticked items with
-evidence as you went. Before telling the user sources are ingested, read that file back — any unchecked
-box means you are not done (finish it, or record the user's explicit confirmation to skip) — then
-reproduce the evidence-annotated checklist here.
+Before telling the user sources are ingested, verify every item against its checklist file and reproduce
+the evidence-annotated list here, per the **completion-checklist convention** in
+`references/astrodb-directions.md`.
 
 - [ ] `database.toml` was located (you asked the user rather than inventing one when it wasn't found).
 - [ ] Every discovery reference already exists in `Publications` — and for any that were missing, you offered to run `ingest_publication` as a sub-step rather than just telling the user to do it.
