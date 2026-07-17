@@ -20,9 +20,9 @@ by the user's data.
    to carry forward context and decisions from prior skills (especially schema-match choices).
 3. Check whether `astrodb-build-artifacts/directions.md` exists. If it does, read it — it may specify
    schema decisions that should override the defaults below.
-4. Initialize this skill's checklist file per the completion-checklist convention — create the
-   artifact directory if needed, then copy the items from `## Completion Checklist` (bottom of this
-   file) into `astrodb-build-artifacts/astrodb-build-schema-generate-checklist.md`.
+4. Record this skill's checklist per the completion-checklist convention — create the artifact
+   directory if needed, then add a `## astrodb-build-schema-generate` section holding the items from
+   `## Completion Checklist` (bottom of this file) to `astrodb-build-artifacts/checklists.md`.
 
 ## What is Felis YAML?
 
@@ -181,7 +181,7 @@ Fix the errors, rewrite the file, and re-run validation. Repeat until the schema
 
 ## Completion Checklist
 
-Before telling the user the schema is generated, verify every item against its checklist file and
+Before telling the user the schema is generated, verify every item in your section of the workflow checklist file and
 reproduce the evidence-annotated list here, per the **completion-checklist convention** in
 `references/astrodb-directions.md`.
 

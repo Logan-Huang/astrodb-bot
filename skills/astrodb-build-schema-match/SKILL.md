@@ -33,9 +33,9 @@ mkdir -p astrodb-build-artifacts
 
 If this fails, stop and tell the user you cannot create the output directory.
 
-Then initialize this skill's checklist file per the completion-checklist convention: copy the items
-from `## Completion Checklist` (bottom of this file) into
-`astrodb-build-artifacts/astrodb-build-schema-match-checklist.md`.
+Then record this skill's checklist per the completion-checklist convention: add a
+`## astrodb-build-schema-match` section holding the items from `## Completion Checklist` (bottom of
+this file) to `astrodb-build-artifacts/checklists.md`.
 
 ## Directions Document
 
@@ -193,7 +193,7 @@ proposed, and any decisions made without `astrodb-build-artifacts/directions.md`
 
 ## Completion Checklist
 
-Before telling the user the mapping is done, verify every item against its checklist file and reproduce
+Before telling the user the mapping is done, verify every item in your section of the workflow checklist file and reproduce
 the evidence-annotated list here, per the **completion-checklist convention** in
 `references/astrodb-directions.md`.
 

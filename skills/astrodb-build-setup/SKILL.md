@@ -162,11 +162,11 @@ If any of the three is missing, the repo probably wasn't created from the astrod
 user what's absent and have them confirm they used **Use this template** on astrodb-template-db before
 going on.
 
-Now that the repo is in place, initialize this skill's checklist file per the **completion-checklist
-convention** in `references/astrodb-directions.md`. Create the artifact directory and copy the items
-from `## Completion Checklist` (bottom of this file) into
-`<repo-dir>/astrodb-build-artifacts/astrodb-build-setup-checklist.md`, then tick items with evidence as
-you complete them through the rest of setup:
+Now that the repo is in place, record this skill's checklist per the **completion-checklist convention**
+in `references/astrodb-directions.md`. Create the artifact directory and add a `## astrodb-build-setup`
+section holding the items from `## Completion Checklist` (bottom of this file) to
+`<repo-dir>/astrodb-build-artifacts/checklists.md`, then tick items with evidence as you complete them
+through the rest of setup:
 
 ```bash
 mkdir -p <repo-dir>/astrodb-build-artifacts
@@ -417,7 +417,7 @@ document was completed now or deferred. Subsequent skills will append to this fi
 
 ## Completion Checklist
 
-Before telling the user setup is complete, verify every item against its checklist file and reproduce
+Before telling the user setup is complete, verify every item in your section of the workflow checklist file and reproduce
 the evidence-annotated list here, per the **completion-checklist convention** in
 `references/astrodb-directions.md`.
 

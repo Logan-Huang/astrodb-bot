@@ -68,44 +68,54 @@ running validation commands that passed without issues).
 
 ## Artifact folder convention
 
-Each skill writes its outputs inside its **artifact directory** in the current working directory:
-`astrodb-build-artifacts/` for the build and website skills, `astrodb-ingest-artifacts/` for the
-ingest skills. Create it before writing any files:
+Each **workflow** has its own artifact directory in the current working directory, and every skill in
+that workflow writes its outputs there:
+
+| Workflow | Skills | Artifact directory |
+|----------|--------|--------------------|
+| build    | `astrodb-build-*` | `astrodb-build-artifacts/` |
+| ingest   | `astrodb-ingest-*` | `astrodb-ingest-artifacts/` |
+| website  | `astrodb-website` | `astrodb-website-artifacts/` |
+
+Create the directory before writing any files:
 
 ```bash
-mkdir -p astrodb-build-artifacts    # or astrodb-ingest-artifacts, for the ingest skills
+mkdir -p astrodb-build-artifacts   # or astrodb-ingest-artifacts / astrodb-website-artifacts
 ```
 
 If this fails, stop and tell the user you cannot create the output directory.
 
 ## Completion-checklist convention
 
-Every skill ends with a `## Completion Checklist` — a short list of verifiable outcomes that must
-hold before the skill reports itself done. Treat that checklist as **file-tracked**, not something you
-read once at the start and try to remember. On a long run, an unchecked list read only at the outset
-quietly falls out of attention, and the items that get skipped are exactly the ones with no immediate
-visible failure — a deleted-file that wasn't deleted, a `SAVE_DB` left flipped, a check never run.
-Keeping the checklist in a file you revisit is what keeps it honest.
+Every skill ends with a `## Completion Checklist` — a short list of verifiable outcomes that must hold
+before the skill reports itself done. Treat it as **file-tracked**, not something you read once at the
+start and try to remember: on a long run an unchecked list read only at the outset quietly falls out of
+attention, and the items that get skipped are exactly the ones with no immediate visible failure — a
+deleted-file that wasn't deleted, a `SAVE_DB` left flipped, a check never run. Keeping the checklist in
+a file you revisit is what keeps it honest.
 
-So for **every** skill:
+Each **workflow** keeps a single shared checklist file, `checklists.md`, inside that workflow's artifact
+directory (e.g. `astrodb-build-artifacts/checklists.md`). Every skill records its own checklist there
+under a heading named for the skill, so as you run a workflow the file accumulates one section per skill
+and shows the whole phase's verification in one place. So for **every** skill:
 
-1. **Create the checklist file at the start.** Copy the items from that skill's `## Completion
-   Checklist` section — verbatim and unchecked — into `<artifact-dir>/<skill-name>-checklist.md`
-   (e.g. `astrodb-build-artifacts/astrodb-build-parse-table-checklist.md`). `<artifact-dir>` is the
-   skill's artifact directory from the convention above. Overwrite any copy a previous run left behind.
+1. **Record your section at the start.** If `<artifact-dir>/checklists.md` doesn't exist yet, create it
+   with a title line (e.g. `# AstroDB build-workflow checklists`). Then add — or, if you're re-running,
+   replace — a `## <skill-name>` section (e.g. `## astrodb-build-parse-table`) holding this skill's
+   `## Completion Checklist` items, verbatim and unchecked. Leave every other skill's section untouched.
 
-2. **Tick items as they are genuinely done.** The moment an item is satisfied, flip its `[ ]` to `[x]`
-   in the file and add a one-line evidence note — the value you set, the path you wrote, or the command
-   output that proves it. Never tick a box by inventing a value or claiming a check you didn't run.
-   Where an item depends on the user, record what actually happened ("prompted and the user declined"),
-   never a forced action you didn't take.
+2. **Tick your items as they are genuinely done.** The moment an item is satisfied, flip its `[ ]` to
+   `[x]` under your section and add a one-line evidence note — the value you set, the path you wrote, or
+   the command output that proves it. Never tick a box by inventing a value or claiming a check you
+   didn't run. Where an item depends on the user, record what actually happened ("prompted and the user
+   declined"), never a forced action you didn't take.
 
-3. **Verify before reporting done.** Read the checklist file back. Any unchecked box means you are not
-   finished — complete the item, or record the user's explicit waiver as its evidence note. Then
-   reproduce the evidence-annotated checklist in your completion message, so the user sees exactly what
-   was verified instead of a bare "all checks passed."
+3. **Verify before reporting done.** Re-read your section. Any unchecked box means you are not finished —
+   complete the item, or record the user's explicit waiver as its evidence note. Then reproduce your
+   evidence-annotated section in your completion message, so the user sees exactly what was verified
+   instead of a bare "all checks passed."
 
-If you reach the end and the file was never created, create it now and backfill honestly — tick only
+If you reach the end and never opened the file, add your section now and backfill honestly — tick only
 what you can still prove.
 
 ## Skills must ask, not assume

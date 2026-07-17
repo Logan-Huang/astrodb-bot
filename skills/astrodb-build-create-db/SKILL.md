@@ -16,9 +16,9 @@ using `astrodbkit`.
    completion-checklist conventions this skill follows.
 2. Check whether `workflow.md` exists in the current working directory. If it does, read it
    to carry forward context from prior skills.
-3. Initialize this skill's checklist file per the completion-checklist convention — create the
-   artifact directory if needed, then copy the items from `## Completion Checklist` (bottom of this
-   file) into `astrodb-build-artifacts/astrodb-build-create-db-checklist.md`.
+3. Record this skill's checklist per the completion-checklist convention — create the artifact
+   directory if needed, then add a `## astrodb-build-create-db` section holding the items from
+   `## Completion Checklist` (bottom of this file) to `astrodb-build-artifacts/checklists.md`.
 
 ## Prerequisites
 
@@ -212,7 +212,7 @@ Next steps:
 
 ## Completion Checklist
 
-Before telling the user the database is created, verify every item against its checklist file and
+Before telling the user the database is created, verify every item in your section of the workflow checklist file and
 reproduce the evidence-annotated list here, per the **completion-checklist convention** in
 `references/astrodb-directions.md`. The felis-validation and pytest gates below are **not waivable** —
 do not proceed past a failure.

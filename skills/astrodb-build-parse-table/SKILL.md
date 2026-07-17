@@ -25,9 +25,9 @@ Parse the data table file `$ARGUMENTS` and extract column information.
    ```
 
    If this fails, stop and tell the user you cannot create the output directory.
-4. Initialize this skill's checklist file per the completion-checklist convention: copy the items from
-   `## Completion Checklist` (bottom of this file) into
-   `astrodb-build-artifacts/astrodb-build-parse-table-checklist.md`.
+4. Record this skill's checklist per the completion-checklist convention: add a
+   `## astrodb-build-parse-table` section holding the items from `## Completion Checklist` (bottom of
+   this file) to `astrodb-build-artifacts/checklists.md`.
 5. Look for a **directions document** — the user's own notes on this dataset (columns to skip, how to
    handle edge cases, schema decisions already made). Work through these in order and stop at the first
    hit:
@@ -259,7 +259,7 @@ and any columns still missing metadata.
 
 ## Completion Checklist
 
-Before telling the user the table is parsed, verify every item against its checklist file and reproduce
+Before telling the user the table is parsed, verify every item in your section of the workflow checklist file and reproduce
 the evidence-annotated list here, per the **completion-checklist convention** in
 `references/astrodb-directions.md`. Don't claim a value you didn't actually extract.
 
