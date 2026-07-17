@@ -12,6 +12,12 @@ table of an AstroDB SQLite database using `astrodb_utils.sources.ingest_source`.
 Read `references/ingest_source_api.md` before starting — it has the full signature,
 parameter meanings, and common warnings with fixes.
 
+## Step 0: Read context documents
+
+1. Read `references/astrodb-directions.md` for the workflow.md convention.
+2. Check whether `workflow.md` exists in the current working directory. If it does, read it
+   to carry forward context from prior skills.
+
 ## Prerequisites
 
 1. **`database.toml`** (astrodb-template-db layout) — this file is required to load the

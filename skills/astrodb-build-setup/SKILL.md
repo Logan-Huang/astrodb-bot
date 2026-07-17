@@ -8,6 +8,9 @@ metadata:
 
 # AstroDB Setup
 
+Read `references/astrodb-directions.md` before starting — it documents the `workflow.md`
+convention that this skill initializes and all subsequent skills maintain.
+
 This is the **first step** in standing up a new AstroDB, and its whole job is to get a correctly
 structured, named database repository onto the user's machine — nothing more. It deliberately stops
 before any data is involved; bringing in a data table to parse and ingest is the *next* step, handled
@@ -316,7 +319,7 @@ Act on their answer with the `Edit` tool (not `sed`), leaving the rest of the fi
 
 If the user says "skip," "later," or "leave it," that's fine — move on to Step 7 without pressing.
 
-## Step 8: Artifacts directory and directions document
+## Step 9: Artifacts directory and directions document
 
 Create the artifacts directory now, so everything downstream has a home to write to:
 
@@ -362,7 +365,7 @@ skill later. Don't copy the example in as a placeholder to fill later: downstrea
 presence of `directions.md` as a signal that real, user-authored guidance exists, so a file of unfilled
 headings is worse than no file at all — it sends them looking for direction the user never gave.
 
-## Step 9: Confirm, and point to what's next
+## Step 11: Confirm, and point to what's next
 
 Tell the user the scaffold is ready: where the repo was cloned, that the structure checks out, and that
 `db_name` is set (along with any README and LICENSE edits they made). This is also the natural point to
@@ -393,6 +396,13 @@ separate skill:
 > later.
 
 Only raise this if there is an actual mismatch. If the names already match, skip this entirely.
+
+## Final Step: Initialize `workflow.md`
+
+Follow the convention in `references/astrodb-directions.md`. Create `workflow.md` in the
+repo root (using the standard header) and append a setup entry recording: the database name
+chosen, the GitHub repo URL, the README description provided, and whether a directions
+document was completed now or deferred. Subsequent skills will append to this file.
 
 ## Completion Checklist
 

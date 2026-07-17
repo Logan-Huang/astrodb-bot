@@ -12,11 +12,11 @@ metadata:
 ## Instructions
 Parse the data table file `$ARGUMENTS` and extract column information.
 
-**All outputs from this skill must be written inside a folder named `astrodb-build-artifacts/` in the current working directory.** Create this folder before writing any files.
+### Step 0: Read context documents
 
 ### Step 0: Create the artifact folder and check for a directions document
 
-Run this before anything else:
+### Step 1: Create the artifact folder
 
 ```bash
 mkdir -p astrodb-build-artifacts
@@ -73,7 +73,7 @@ If that fails, tell the user Python 3.11 or greater is required and ask them to 
 
 If none of the above work, tell the user you're unable to install the required libraries and ask them to run in an environment that has either `uv` or `pip` available.
 
-### Step 2: Read the file
+### Step 3: Read the file
 
 Use `astropy.table.Table.read()` first, which handles most formats automatically. Fall back to `pandas` if needed:
 
@@ -128,7 +128,7 @@ except Exception:
 
 # Write sidecar so downstream skills (e.g. astrodb-build-schema-match, astrodb-build-schema-validate)
 # can reuse the same reader without re-discovering the format.
-# Output file paths are added to the sidecar in Step 5.
+# Output file paths are added to the sidecar in Step 6.
 with open("astrodb-build-artifacts/astrodb-parse-result.json", "w") as f:
     json.dump({
         "file_path": "$ARGUMENTS",
@@ -141,7 +141,7 @@ with open("astrodb-build-artifacts/astrodb-parse-result.json", "w") as f:
 
 See `references/file-formats.md` for the full list of supported formats.
 
-### Step 3: Extract column information
+### Step 4: Extract column information
 
 For each column, extract:
 - **Column name**
@@ -185,7 +185,7 @@ If you can't infer a description confidently, leave it as "—".
 
 When a column has no units in the file metadata, consult `references/units-inference.md` for the lookup table and uncertainty-column inheritance logic.
 
-### Step 4: Ask the user to fill in any remaining gaps
+### Step 5: Ask the user to fill in any remaining gaps
 
 After exhausting file metadata and inference, if there are still columns with missing descriptions or units, ask the user to fill them in — but only if the number is manageable (fewer than 10). Present each missing column one at a time and wait for the user's response before moving to the next.
 
@@ -196,7 +196,7 @@ For example:
 
 If there are 10 or more columns still missing descriptions or units, output the table as-is with "—" placeholders and note at the end how many are missing, so the user can address them separately.
 
-### Step 5: Output the results
+### Step 6: Output the results
 
 Create a new output directory inside `astrodb-build-artifacts/`, named after the input file's base name with a `-parsed-data-table` suffix. **Do not overwrite an existing directory** — if the directory already exists, append `-1`, `-2`, etc. until a free name is found. For example, if the input is `data/catalog.fits`, create `astrodb-build-artifacts/catalog-parsed-data-table/` and save:
 - `astrodb-build-artifacts/catalog-parsed-data-table/catalog-parsed-data-table.md`
@@ -242,9 +242,17 @@ with open("astrodb-build-artifacts/astrodb-parse-result.json", "w") as f:
     json.dump(sidecar, f)
 ```
 
-### Step 6: Iterate as needed
+### Step 7: Iterate as needed
 
 Ask the user to inspect the results table and check if everything looks good, or if they want to make any edits to the descriptions, units, or types. If they want to make edits, allow them to specify which column(s) and what changes to make, then update the markdown and HTML files accordingly.
+
+## Final Step: Update `workflow.md`
+
+Follow the convention in `references/astrodb-directions.md`. Append one new entry to
+`workflow.md` in the current working directory (create it with the standard header if it
+doesn't exist yet). Record: which file was parsed, which reader was used and why, any
+column descriptions or units that were inferred, what the user confirmed during gap-filling,
+and any columns still missing metadata.
 
 ## Completion Checklist
 

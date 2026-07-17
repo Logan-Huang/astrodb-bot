@@ -12,6 +12,14 @@ Take a completed AstroDB schema mapping — and optionally a validation report �
 well-formed Felis YAML schema file covering all the tables and columns that will be populated
 by the user's data.
 
+## Step 0: Read context documents
+
+1. Read `references/astrodb-directions.md` for the workflow.md convention.
+2. Check whether `workflow.md` exists in the current working directory. If it does, read it
+   to carry forward context and decisions from prior skills (especially schema-match choices).
+3. Check whether `artifacts/directions.md` exists. If it does, read it — it may specify
+   schema decisions that should override the defaults below.
+
 ## What is Felis YAML?
 
 Felis is the schema description language used by AstroDB and LSST. A Felis YAML file defines

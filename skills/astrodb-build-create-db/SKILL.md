@@ -10,6 +10,12 @@ Take a Felis-validated `schema.yaml` and create an empty SQLite database followi
 [astrodb-template-db](https://github.com/astrodbtoolkit/astrodb-template-db) file structure,
 using `astrodbkit`.
 
+## Step 0: Read context documents
+
+1. Read `references/astrodb-directions.md` for the workflow.md convention.
+2. Check whether `workflow.md` exists in the current working directory. If it does, read it
+   to carry forward context from prior skills.
+
 ## Prerequisites
 
 This skill requires a schema.yaml that has **passed** `felis validate`. The astrodb-build-schema-generate

@@ -11,6 +11,14 @@ metadata:
 Check that a completed column mapping is safe to ingest by comparing what the data actually
 contains against what the schema requires.
 
+## Step 0: Read context documents
+
+1. Read `references/astrodb-directions.md` for the workflow.md convention.
+2. Check whether `workflow.md` exists in the current working directory. If it does, read it
+   to carry forward context from prior skills.
+3. Check whether `astrodb-build-artifacts/directions.md` exists. If it does, read it — it may describe
+   known nullable or type edge cases relevant to this validation.
+
 Two classes of problems can block a clean ingest:
 1. **Nullable violations** — the schema marks a field as `nullable: false`, but the data
    column has missing/null values. Inserting these rows will raise a database constraint error.
