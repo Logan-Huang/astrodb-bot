@@ -15,6 +15,7 @@ from astropy.table import Table
 from astrodb_utils import AstroDBError, build_db_from_json
 from astrodb_utils.photometry import ingest_photometry, ingest_photometry_filter
 from astrodb_utils.sources import find_source_in_db
+from astrodb_utils.utils import get_db_regime
 
 logging.getLogger("astrodb_utils").setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,8 +32,8 @@ TABLE_PATH = "path/to/file.fits"  # confirmed in Step 1
 SOURCE_COL = "Name"          # required — source name column
 REFERENCE_COL = "Reference"  # required — must already exist in Publications
 EPOCH_COL = None             # optional — column name or None
-REGIME_COL = None            # optional — column name or None
 COMMENTS_COL = None          # optional — column name or None
+# regime is NOT a data column — it is derived from each band's SVO filter (see resolve_regimes)
 
 # --- Bands — one entry per magnitude column present in the table (from Steps 3-4) ---
 # The per-band telescope (4th field) is written to Photometry.telescope; set it to None to omit.
@@ -114,7 +115,43 @@ def setup_filters(db):
     return created
 
 
-def ingest_all(db, data):
+def regime_from_wavelength(wave_ang):
+    """Coarse regime from a filter's effective wavelength (Angstroms)."""
+    if wave_ang < 3000:
+        return "ultraviolet"
+    if wave_ang < 10000:
+        return "optical"
+    if wave_ang < 30000:
+        return "nir"      # near-infrared (J/H/K)
+    return "mir"          # mid-infrared (WISE, etc.)
+
+
+def resolve_regimes(db):
+    """{svo_id: canonical RegimeList regime} derived from each filter's SVO effective wavelength.
+
+    get_db_regime returns None when the derived regime is not in RegimeList — surface those to the
+    user (add the regime, or pick an existing one) rather than ingesting a regime the FK will reject.
+    """
+    regimes = {}
+    for svo_id in BAND_SETUP:
+        row = (
+            db.query(db.PhotometryFilters)
+            .filter(db.PhotometryFilters.c.band == svo_id)
+            .table()
+        )
+        if len(row) == 0:
+            continue
+        eff = float(row["effective_wavelength_angstroms"][0])
+        regime = get_db_regime(db, regime_from_wavelength(eff), raise_error=False)
+        if regime is None:
+            logger.warning(
+                f"Regime for {svo_id} (~{eff:.0f} A) not in RegimeList — add it or pick one with the user."
+            )
+        regimes[svo_id] = regime
+    return regimes
+
+
+def ingest_all(db, data, band_regime):
     """Phase B — ingest each (source, band) magnitude, bucketing skips by reason."""
     counts = {
         "ingested": 0,
@@ -148,10 +185,11 @@ def ingest_all(db, data):
                 kwargs["magnitude_error"] = float(row[err_col])
             if telescope:
                 kwargs["telescope"] = telescope
+            regime = band_regime.get(svo_id)
+            if regime:
+                kwargs["regime"] = regime
             if EPOCH_COL and not is_missing(row[EPOCH_COL]):
                 kwargs["epoch"] = float(row[EPOCH_COL])
-            if REGIME_COL and not is_missing(row[REGIME_COL]):
-                kwargs["regime"] = str(row[REGIME_COL])
             if COMMENTS_COL and not is_missing(row[COMMENTS_COL]):
                 kwargs["comments"] = str(row[COMMENTS_COL])
             try:
@@ -173,7 +211,8 @@ if __name__ == "__main__":
     logger.info(f"Loaded {len(data)} rows from {TABLE_PATH}")
 
     filters_created = setup_filters(db)
-    counts = ingest_all(db, data)
+    band_regime = resolve_regimes(db)
+    counts = ingest_all(db, data, band_regime)
 
     logger.info(
         f"Done: {counts['ingested']} ingested, "
@@ -201,4 +240,28 @@ if __name__ == "__main__":
 #   Skipped (source missing):   <...>
 #   Skipped (reference missing):<...>
 #   Skipped (other):            <...>
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Asymmetric errors (magnitude_error_upper / magnitude_error_lower)
+# ---------------------------------------------------------------------------
+# ingest_photometry only accepts a single symmetric magnitude_error. When the
+# data has asymmetric errors, DON'T drop or silently average them — ingest with
+# a small custom insert modeled on ingest_photometry: validate source/band/
+# reference the same way, then write the upper/lower columns directly.
+#
+# from astrodb_utils.publications import find_publication
+#
+# def ingest_asymmetric(db, *, source, band, magnitude, reference,
+#                       err_upper, err_lower, telescope=None, regime=None, epoch=None):
+#     assert len(find_source_in_db(db, source)) == 1, f"source not unique: {source}"
+#     assert find_publication(db, reference=reference)[0], f"reference missing: {reference}"
+#     assert len(db.query(db.PhotometryFilters)
+#                .filter(db.PhotometryFilters.c.band == band).table()) == 1, f"band missing: {band}"
+#     row = {"source": source, "band": band, "magnitude": str(magnitude),
+#            "magnitude_error_upper": str(err_upper), "magnitude_error_lower": str(err_lower),
+#            "telescope": telescope, "regime": regime, "epoch": epoch, "reference": reference}
+#     with db.engine.connect() as conn:
+#         conn.execute(db.Photometry.insert().values(row))
+#         conn.commit()
 # ---------------------------------------------------------------------------

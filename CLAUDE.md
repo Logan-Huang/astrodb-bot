@@ -31,7 +31,7 @@ When skills are added, removed, or significantly updated, remind the user to:
 
 Releases are created via the GitHub "Draft a new release" button. Use tags of the form `v1.0.0`.
 
-A GitHub Action (`.github/workflows/sync-version.yml`) bumps `pyproject.toml` on the target branch after a release is published so the branch stays in sync for future work. If you need the *release tag contents* to include the updated version, bump `pyproject.toml` before creating the release.
+A GitHub Action (`.github/workflows/sync-version.yml`) bumps `pyproject.toml` on the target branch after a release is published so the branch stays in sync for future work. **Do not bump `pyproject.toml` in a feature PR** — the action handles the version on release, so a manual bump only creates conflicts. Leave the version field alone unless you are specifically preparing the contents of a release tag before publishing it.
 
 ### Version Guidance
 

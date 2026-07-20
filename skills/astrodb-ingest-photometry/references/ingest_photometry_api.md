@@ -52,7 +52,7 @@ band+reference, flag it for the user rather than silently dropping rows.
 
 `magnitude_error_upper` / `magnitude_error_lower` exist in the `Photometry` schema (columns of type
 `double`) but are **not** parameters of this function — only a symmetric `magnitude_error` is
-supported.
+supported. They are still ingestible with a custom insert — see "Ingesting asymmetric errors" below.
 
 Column string caps (from the schema): `source` 100, `comments` 100, and `band` / `telescope` /
 `reference` / `regime` 30 characters. A value over its cap raises an `IntegrityError` (not a UNIQUE
@@ -165,6 +165,66 @@ band and ask the user** to confirm rather than guessing.
 | `Telescope X not found in Telescopes table.` | `telescope=` passed but no row | Let `ingest_photometry_filter` create it, or omit `telescope` |
 | `The measurement may be a duplicate.` | UNIQUE constraint on insert | Expected on re-runs; report as "already present", not an error |
 | `Error fetching filter data from SVO` | No internet, or unknown filter ID | Check connectivity; confirm the SVO ID exists in the FPS |
-| Asymmetric error columns present | `magnitude_error_upper/lower` unsupported | Ask the user how to handle; the helper takes only symmetric `magnitude_error` |
+| Asymmetric error columns present | `magnitude_error_upper/lower` aren't `ingest_photometry` params | Write a custom insert that populates those columns — see "Ingesting asymmetric errors" |
 | Repeated `may be a duplicate` on multi-epoch data | Key is `(source, band, reference)` — `epoch` is not in it | Flag time-series data; only one row per source+band+reference fits this key |
 | `IntegrityError` value too long | A string exceeds its column cap (`source`/`comments` 100; `band`/`telescope`/`reference`/`regime` 30) | Trim/shorten the value before ingest |
+| `Regime not found in database` | Derived regime isn't in `RegimeList` | Add it to `RegimeList` or pick an existing one with the user (see "Regime") |
+
+---
+
+## Regime — derived from the SVO filter (not a user column)
+
+`Photometry.regime` links to the controlled `RegimeList` table. You don't need the user to supply it:
+the band's SVO filter already gives the effective wavelength (stored in
+`PhotometryFilters.effective_wavelength_angstroms` after `ingest_photometry_filter`), which determines
+the regime. Bin the wavelength, then canonicalize against `RegimeList` with `get_db_regime`:
+
+```python
+from astrodb_utils.utils import get_db_regime
+
+def regime_from_wavelength(wave_ang):   # Angstroms
+    if wave_ang < 3000:   return "ultraviolet"
+    if wave_ang < 10000:  return "optical"
+    if wave_ang < 30000:  return "nir"    # J/H/K
+    return "mir"                          # WISE, etc.
+
+regime = get_db_regime(db, regime_from_wavelength(eff_wavelength), raise_error=False)
+```
+
+`get_db_regime(db, regime, raise_error=True)` matches `RegimeList` case- and hyphen-insensitively and
+returns the canonical value, or `None` when it isn't in the table (its warning lists the available
+regimes). If it returns `None`, **ask the user** — add the regime to `RegimeList` or pick an existing
+one. `ingest_photometry` does not validate `regime` itself, so a value absent from `RegimeList` fails
+the foreign key on insert (bucketed *other*) — resolve it first.
+
+---
+
+## Ingesting asymmetric errors
+
+`ingest_photometry` takes only a symmetric `magnitude_error`, but the `Photometry` table has
+`magnitude_error_upper` and `magnitude_error_lower` columns. When the data has asymmetric errors,
+don't drop or silently average them — write a small custom insert modeled on `ingest_photometry`:
+validate `source` / `reference` / `band` the same way, then insert with the upper/lower columns set.
+
+```python
+from astrodb_utils.sources import find_source_in_db
+from astrodb_utils.publications import find_publication
+
+def ingest_asymmetric(db, *, source, band, magnitude, reference,
+                      err_upper, err_lower, telescope=None, regime=None, epoch=None):
+    assert len(find_source_in_db(db, source)) == 1, f"source not unique: {source}"
+    assert find_publication(db, reference=reference)[0], f"reference missing: {reference}"
+    assert len(db.query(db.PhotometryFilters)
+               .filter(db.PhotometryFilters.c.band == band).table()) == 1, f"band missing: {band}"
+    row = {
+        "source": source, "band": band, "magnitude": str(magnitude),
+        "magnitude_error_upper": str(err_upper), "magnitude_error_lower": str(err_lower),
+        "telescope": telescope, "regime": regime, "epoch": epoch, "reference": reference,
+    }
+    with db.engine.connect() as conn:
+        conn.execute(db.Photometry.insert().values(row))
+        conn.commit()
+```
+
+Confirm the upper/lower column mapping with the user first, and store magnitudes/errors as strings to
+preserve significant digits (matching `ingest_photometry`).

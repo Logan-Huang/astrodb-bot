@@ -12,6 +12,7 @@
         "The tailored script is written to astrodb-ingest-artifacts/ (not tmp/) and named after the input file",
         "The script uses build_db_from_json(settings_file=...) and sets SAVE_DB = False for the dry run",
         "The e_Jmag/e_Hmag/e_W1mag columns are passed as magnitude_error",
+        "Each band's regime is derived from its SVO effective wavelength and resolved via get_db_regime (e.g. J/H -> nir), not requested from the user as a column",
         "A dry run is executed and ingested/skipped counts (plus filters created) are reported before the user is asked to confirm saving"
       ]
     },
@@ -73,12 +74,12 @@
     {
       "id": 7,
       "prompt": "Ingest the photometry in evals/data/asymmetric_errors.csv into my database.",
-      "expected_output": "The table has asymmetric Jmag_upper/Jmag_lower error columns, which ingest_photometry does not support (only symmetric magnitude_error). The skill flags this and asks the user how to handle it rather than dropping the uncertainty silently.",
+      "expected_output": "The table has asymmetric Jmag_upper/Jmag_lower error columns. ingest_photometry only takes a symmetric magnitude_error, so the skill writes a small custom insert (modeled on ingest_photometry) that validates source/band/reference and populates the Photometry magnitude_error_upper/magnitude_error_lower columns directly, after confirming the mapping with the user.",
       "files": ["evals/data/asymmetric_errors.csv"],
       "expectations": [
-        "The skill recognizes that magnitude_error_upper/magnitude_error_lower are not parameters of ingest_photometry",
-        "It tells the user asymmetric errors are unsupported and asks how to proceed (use one side, average, or skip the uncertainty)",
-        "It does not silently discard the asymmetric error columns"
+        "The skill recognizes that magnitude_error_upper/magnitude_error_lower are real Photometry columns that ingest_photometry does not populate",
+        "It writes a custom insert (modeled on ingest_photometry, validating source/band/reference) that populates magnitude_error_upper and magnitude_error_lower rather than dropping or silently averaging them",
+        "It confirms the upper/lower column mapping with the user before writing"
       ]
     }
   ]

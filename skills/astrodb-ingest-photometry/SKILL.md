@@ -10,7 +10,9 @@ Generate and run a Python script that ingests rows from a data table into the `P
 table of an AstroDB SQLite database using `astrodb_utils.photometry.ingest_photometry`. Because a
 photometry measurement points at a **band**, a **source**, and a **reference**, this skill also makes
 sure the band's `PhotometryFilters` row (and its `Telescopes` / `Instruments` rows) exist **before**
-any magnitude is ingested — using SVO Filter Profile Service IDs for band names.
+any magnitude is ingested — using SVO Filter Profile Service IDs for band names. The band's SVO filter
+also lets the skill figure out the `telescope` and the `regime` for each measurement, so those don't
+have to be columns the user maps by hand.
 
 Read `references/ingest_photometry_api.md` before starting — it has the full signatures for
 `ingest_photometry` / `ingest_photometry_filter` / `fetch_svo`, the SVO band-ID rules, and common
@@ -18,13 +20,14 @@ warnings with fixes.
 
 ## Step 0: Read context documents
 
-1. Read `references/astrodb-directions.md` — it defines the `workflow.md`, artifact-folder, and
-   completion-checklist conventions this skill follows.
-2. Check whether `workflow.md` exists in the current working directory. If it does, read it
-   to carry forward context from prior skills.
-3. Record this skill's checklist per the completion-checklist convention — create the artifact
-   directory if needed, then add a `## astrodb-ingest-photometry` section holding the items from
-   `## Completion Checklist` (bottom of this file) to `astrodb-ingest-artifacts/checklists.md`.
+1. Read `references/astrodb-ingest-directions.md` — the conventions for the ingest workflow: the
+   `ingest-workflow.md` decision log and the completion-checklist convention. It points to
+   `references/astrodb-directions.md` for the shared artifact-folder and "ask, don't assume" rules.
+2. If `astrodb-ingest-artifacts/ingest-workflow.md` exists, read it to carry forward context from
+   prior ingest skills.
+
+(The ingest skills **verify** their completion checklist and report it in the final message — they do
+not write it out to a file. See `references/astrodb-ingest-directions.md`.)
 
 ## Prerequisites
 
@@ -105,17 +108,20 @@ Present the actual column names from Step 1 and confirm the role of each. Do **n
 |------|-----------|-------|
 | Source name | **Yes** | Resolved to `Sources.source` in Step 2 |
 | Band / magnitude columns | **Yes** | One per band; the column value is the magnitude |
-| Magnitude error | No | The matching `e_*` / `*_err` column for each band |
+| Magnitude error | No | The matching `e_*` / `*_err` column for each band (symmetric) |
 | Reference | **Yes** | Must already exist in `Publications` |
-| Telescope | No | If given, must exist in `Telescopes` (Step 4 creates it) |
-| Epoch | No | Observation epoch (float, e.g. decimal year) |
-| Regime | No | e.g. `optical`, `infrared`; only written if present |
+| Epoch | No | Decimal year the measurement was taken. Optional, but **encourage the user to include it** when the data has it — an undated magnitude is much less useful later. |
 | Comments | No | |
+| Telescope | Derived | The band's telescope, from its SVO filter (Step 4) — not a column you map by hand |
+| Regime | Derived | Figured out from the band's SVO effective wavelength (Step 4) — not a column you map by hand |
 
-**Flag, don't silently drop:** `ingest_photometry` supports only a **symmetric** `magnitude_error`.
-If the table has asymmetric `magnitude_error_upper` / `magnitude_error_lower` columns, tell the user
-these are not supported by the helper and ask how to proceed (e.g. use one side, average, or skip the
-uncertainty) rather than dropping them silently.
+**Asymmetric errors — supported by the table, just not by the helper.** The `Photometry` table has
+`magnitude_error_upper` and `magnitude_error_lower` columns, but `ingest_photometry` only accepts a
+single symmetric `magnitude_error`. If the data has asymmetric error columns, don't drop them and
+don't silently collapse them: use `ingest_photometry` as a **reference** to write a small custom
+insert that validates source/band/reference the same way and populates
+`magnitude_error_upper` / `magnitude_error_lower` directly (see "Ingesting asymmetric errors" in
+`references/ingest_photometry_api.md`). Confirm the column mapping with the user first.
 
 **Uniqueness is `(source, band, reference)`** — `epoch` is **not** part of the key. If the table has
 more than one measurement of the same source in the same band from the same reference (e.g. a
@@ -125,7 +131,7 @@ this to the user rather than silently losing rows.
 For a wide table, record which magnitude column maps to which **band**, and which error column pairs
 with it — this feeds both Step 4 (filter setup) and the ingest loop.
 
-## Step 4: Resolve bands to SVO IDs and set up filters/telescopes/instruments FIRST
+## Step 4: Resolve bands to SVO IDs; set up filters/telescopes/instruments and derive regimes FIRST
 
 `ingest_photometry` will **reject** a measurement whose `band` is not already a row in
 `PhotometryFilters`. So resolve and create the filters before any magnitude is ingested.
@@ -166,8 +172,32 @@ with it — this feeds both Step 4 (filter setup) and the ingest loop.
    `{telescope}/{instrument}.{filter_name}` — so the `band` you later pass to `ingest_photometry`
    must be that **same** SVO ID string.
 
-Report to the user which filters/telescopes/instruments were created vs already present before moving
-on.
+3. **Derive each band's `regime` from its SVO effective wavelength.** Setting up the filter stored
+   `effective_wavelength_angstroms` in `PhotometryFilters`; bin it into a regime and resolve that
+   against the controlled `RegimeList` with `get_db_regime` (case- and hyphen-insensitive):
+
+   ```python
+   from astrodb_utils.utils import get_db_regime
+
+   def regime_from_wavelength(wave_ang):
+       if wave_ang < 3000:   return "ultraviolet"
+       if wave_ang < 10000:  return "optical"
+       if wave_ang < 30000:  return "nir"      # near-infrared (J/H/K)
+       return "mir"                            # mid-infrared (WISE, etc.)
+
+   eff = db.query(db.PhotometryFilters).filter(
+       db.PhotometryFilters.c.band == svo_id).table()["effective_wavelength_angstroms"][0]
+   regime = get_db_regime(db, regime_from_wavelength(eff), raise_error=False)
+   ```
+
+   `get_db_regime` returns the canonical `RegimeList` value, or `None` if that regime isn't in the
+   table (its warning prints the available regimes). If it's `None`, **ask the user** — either add the
+   regime to `RegimeList` or pick an existing one; don't guess, and don't try to ingest a regime that
+   isn't in the controlled list (it would fail the foreign key). Keep a `{svo_id: regime}` map for the
+   ingest loop, alongside each band's `telescope`.
+
+Report to the user which filters / telescopes / instruments / regimes were created (or already
+present) before moving on.
 
 ## Step 5: Write `astrodb-ingest-artifacts/ingest_{LABEL}_photometry.py`
 
@@ -186,8 +216,9 @@ Do not copy `scripts/ingest_photometry.py` verbatim. The output script must:
 - Ingest each (source, band) magnitude with `ingest_photometry(..., raise_error=True)` inside a
   try/except, bucketing skips by reason (duplicate / band-missing / source-missing / reference-missing
   / other) from the `AstroDBError` message.
-- Only include optional arguments (`magnitude_error`, `telescope`, `epoch`, `regime`, `comments`)
-  that are actually present.
+- Pass `telescope` and `regime` — both **figured out from each band's SVO filter** in Step 4, not left
+  blank just because they weren't columns in the table — plus the optional `magnitude_error`, `epoch`,
+  and `comments` when the data has them.
 - Set `SAVE_DB = False`.
 - Use the dry-run log message: `"Dry run complete — NOT saved. Set SAVE_DB = True to write the database to JSON files."`
 
@@ -213,25 +244,27 @@ After a clean dry run, ask the user:
 
 **Never set `SAVE_DB = True` automatically** — only on explicit user confirmation.
 
-## Final Step: Update `workflow.md`
+## Final Step: Update `ingest-workflow.md`
 
-Follow the convention in `references/astrodb-directions.md`. Append one new entry to `workflow.md` in
-the current working directory (create it with the standard header if it doesn't exist yet). Record:
-which bands were resolved to which SVO IDs (and any that needed user confirmation), which
-filters/telescopes/instruments were created, how many measurements were ingested / skipped and why,
-and whether the user explicitly confirmed before saving.
+Follow the convention in `references/astrodb-ingest-directions.md`. **Prepend** one dated entry (most
+recent on top) to `astrodb-ingest-artifacts/ingest-workflow.md` (create it with the standard header if
+it doesn't exist). Record: which bands resolved to which SVO IDs (and any confirmed with the user), the
+regimes derived, which filters / telescopes / instruments / regimes were created, how many measurements
+were ingested / skipped and why, and whether the user confirmed before saving.
 
 ## Completion Checklist
 
-Before telling the user photometry is ingested, verify every item in your section of the workflow
-checklist file and reproduce the evidence-annotated list here, per the **completion-checklist
-convention** in `references/astrodb-directions.md`.
+Before telling the user photometry is ingested, verify every item in the checklist below, per the
+**completion-checklist convention** in `references/astrodb-ingest-directions.md` — verify and report
+each item in your final message; do **not** write the checklist out to a file.
 
 - [ ] `database.toml` was located (you asked the user rather than inventing one when it wasn't found).
 - [ ] Every source name was resolved to a unique `Sources.source` (directly or through `Names`), and any that did not resolve were flagged — with `astrodb-ingest-sources` offered as a sub-step rather than inventing sources or ingesting against a non-existent one.
 - [ ] Every `reference` already exists in `Publications` — and for any that were missing, you offered to run `astrodb-ingest-publications` rather than just telling the user to do it.
 - [ ] Every band was mapped to a **verified SVO filter ID**, ambiguous bands were confirmed with the user rather than guessed, and its `PhotometryFilters` / `Telescopes` / `Instruments` rows were ensured to exist **before** any magnitude was ingested.
-- [ ] If the data had asymmetric `magnitude_error_upper` / `magnitude_error_lower` columns, you told the user they are not supported by `ingest_photometry` and asked how to handle them rather than dropping them silently.
-- [ ] The tailored script at `astrodb-ingest-artifacts/ingest_{LABEL}_photometry.py` uses the user's real column names, paths, `BANDS` / `BAND_SETUP`, and `SOURCE_NAME_MAP`, includes only optional columns that are actually present, and sets `SAVE_DB = False`.
+- [ ] Each band's `regime` was derived from its SVO effective wavelength and resolved against `RegimeList` (adding it, or picking an existing one with the user, when `get_db_regime` returned nothing), and `telescope` was populated on the `Photometry` rows.
+- [ ] If the data had asymmetric `magnitude_error_upper` / `magnitude_error_lower` columns, you wrote a custom script (modeled on `ingest_photometry`) to ingest them into those columns rather than dropping or silently collapsing them.
+- [ ] The user was encouraged to include `epoch` when the data had it.
+- [ ] The tailored script at `astrodb-ingest-artifacts/ingest_{LABEL}_photometry.py` uses the user's real column names, paths, `BANDS` / `BAND_SETUP`, and `SOURCE_NAME_MAP`, and sets `SAVE_DB = False`.
 - [ ] A dry run was executed, and you reported how many measurements were ingested / skipped (grouped by reason, with warnings) plus which filters were created, and that the database was not saved.
 - [ ] `SAVE_DB = True` was set **only** after the user explicitly confirmed — never automatically.
