@@ -37,8 +37,9 @@ A future reader (or a later skill) can open it and understand what was done and 
 the data or re-running anything. Read it at the start (if it exists) to carry forward context, and add
 an entry after your main work.
 
-**Which file, and whether entries are appended or prepended, is defined in your phase's
-`astrodb-<phase>-directions.md`.** Use this standard entry format:
+Each phase keeps its log in **its own artifact directory** (not the project root), so the phases don't
+share one file. **Which file it is, and whether entries are appended or prepended, is defined in your
+phase's `astrodb-<phase>-directions.md`.** Use this standard entry format:
 
 ```markdown
 ## <Skill Name> — <YYYY-MM-DD>

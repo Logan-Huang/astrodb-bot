@@ -11,10 +11,10 @@ This skill sets up a FastAPI web interface ([astrodb-web](https://github.com/ast
 ## Step 0: Read context documents
 
 1. Read `references/astrodb-directions.md` (shared conventions) and
-   `references/astrodb-website-directions.md` (website specifics: the `workflow.md` decision log and the
-   verify-and-report completion-checklist behavior).
-2. Check whether `workflow.md` exists in the current working directory. If it does, read it
-   to carry forward context from prior skills.
+   `references/astrodb-website-directions.md` (website specifics: the `website-workflow.md` decision log
+   and the verify-and-report completion-checklist behavior).
+2. Check whether `astrodb-website-artifacts/website-workflow.md` exists. If it does, read it
+   to carry forward context (and you may also read `astrodb-build-artifacts/build-workflow.md`).
 
 (This skill **verifies** its completion checklist and reports it in the final message — it does not
 write it out to a file. See `references/astrodb-website-directions.md`.)

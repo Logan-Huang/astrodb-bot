@@ -10,8 +10,8 @@ metadata:
 
 Read `references/astrodb-directions.md` (shared conventions) and
 `references/astrodb-build-directions.md` (build specifics) before starting. Together they document the
-`workflow.md` decision log that this skill initializes and all subsequent skills maintain, the
-artifact-folder convention, and the `checklists.md` completion-checklist tracking this skill follows.
+`build-workflow.md` decision log that this skill initializes and all subsequent build skills maintain,
+the artifact-folder convention, and the `checklists.md` completion-checklist tracking this skill follows.
 
 This is the **first step** in standing up a new AstroDB, and its whole job is to get a correctly
 structured, named database repository onto the user's machine — nothing more. It deliberately stops
@@ -409,12 +409,12 @@ separate skill:
 
 Only raise this if there is an actual mismatch. If the names already match, skip this entirely.
 
-## Final Step: Initialize `workflow.md`
+## Final Step: Initialize `build-workflow.md`
 
-Follow the convention in `references/astrodb-build-directions.md`. Create `workflow.md` in the
-repo root (using the standard header) and append a setup entry recording: the database name
-chosen, the GitHub repo URL, the README description provided, and whether a directions
-document was completed now or deferred. Subsequent skills will append to this file.
+Follow the convention in `references/astrodb-build-directions.md`. Create
+`astrodb-build-artifacts/build-workflow.md` (using the standard header) and append a setup entry
+recording: the database name chosen, the GitHub repo URL, the README description provided, and whether a
+directions document was completed now or deferred. Subsequent build skills will append to this file.
 
 ## Completion Checklist
 

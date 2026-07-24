@@ -15,9 +15,9 @@ by the user's data.
 ## Step 0: Read context documents
 
 1. Read `references/astrodb-directions.md` (shared conventions) and
-   `references/astrodb-build-directions.md` (build specifics: the `workflow.md` decision log and the
+   `references/astrodb-build-directions.md` (build specifics: the `build-workflow.md` decision log and the
    `checklists.md` completion-checklist tracking).
-2. Check whether `workflow.md` exists in the current working directory. If it does, read it
+2. Check whether `astrodb-build-artifacts/build-workflow.md` exists. If it does, read it
    to carry forward context and decisions from prior skills (especially schema-match choices).
 3. Check whether `astrodb-build-artifacts/directions.md` exists. If it does, read it — it may specify
    schema decisions that should override the defaults below.

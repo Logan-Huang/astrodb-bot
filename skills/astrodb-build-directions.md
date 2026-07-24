@@ -5,19 +5,19 @@ These refine the shared conventions in `astrodb-directions.md` for the **build**
 decision-log entry format and what-to-log, the general completion-checklist behavior, and the
 "ask, don't assume" rule. This file only states what is specific to the build phase.
 
-## Decision log: `workflow.md`
+## Decision log: `build-workflow.md`
 
-The build phase's decision log is **`workflow.md`** in the user's current working directory (the project
-root, alongside `database.toml` and `schema.yaml`). It is the pipeline-wide log the ingest and website
-phases can also read for upstream context.
+The build phase's decision log is **`astrodb-build-artifacts/build-workflow.md`** — inside the build
+artifact directory, so each phase keeps its own log in its own artifact folder rather than sharing one
+project-root file.
 
-- **Read** `workflow.md` at the start if it exists.
+- **Read** `build-workflow.md` at the start if it exists.
 - **Create** it with the standard header if it doesn't:
 
   ```markdown
-  # AstroDB Workflow Log
+  # AstroDB Build Workflow Log
 
-  This file records decisions made during the workflow — what was chosen and why.
+  Decisions made during the build phase — what was chosen and why.
   Each skill adds one entry. Do not edit existing entries; add new ones at the end.
   ```
 

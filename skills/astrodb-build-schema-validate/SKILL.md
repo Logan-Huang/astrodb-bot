@@ -14,9 +14,9 @@ contains against what the schema requires.
 ## Step 0: Read context documents
 
 1. Read `references/astrodb-directions.md` (shared conventions) and
-   `references/astrodb-build-directions.md` (build specifics: the `workflow.md` decision log and the
+   `references/astrodb-build-directions.md` (build specifics: the `build-workflow.md` decision log and the
    `checklists.md` completion-checklist tracking).
-2. Check whether `workflow.md` exists in the current working directory. If it does, read it
+2. Check whether `astrodb-build-artifacts/build-workflow.md` exists. If it does, read it
    to carry forward context from prior skills.
 3. Check whether `astrodb-build-artifacts/directions.md` exists. If it does, read it — it may describe
    known nullable or type edge cases relevant to this validation.

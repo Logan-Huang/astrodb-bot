@@ -7,12 +7,12 @@ decision-log entry format and what-to-log, the general completion-checklist beha
 
 ## Decision log: `ingest-workflow.md`
 
-The ingest phase keeps its **own** decision log, separate from the build phase's `workflow.md`, because
-the two phases run at different times and shouldn't share one file. It lives in the ingest artifact
-directory: **`astrodb-ingest-artifacts/ingest-workflow.md`**.
+The ingest phase keeps its **own** decision log, separate from the build phase's `build-workflow.md`,
+because the two phases run at different times and shouldn't share one file. Like every phase, it lives in
+its own artifact directory: **`astrodb-ingest-artifacts/ingest-workflow.md`**.
 
-- **Read** it at the start if it exists (and you may also read the build phase's root `workflow.md` for
-  upstream context).
+- **Read** it at the start if it exists (and you may also read the build phase's
+  `astrodb-build-artifacts/build-workflow.md` for upstream context).
 - **Create** it with the standard header if it doesn't:
 
   ```markdown
