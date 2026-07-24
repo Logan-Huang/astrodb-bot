@@ -14,8 +14,9 @@ Parse the data table file `$ARGUMENTS` and extract column information.
 
 ### Step 0: Read context documents and set up
 
-1. Read `references/astrodb-directions.md` — it defines the `workflow.md`, artifact-folder, and
-   completion-checklist conventions this skill follows.
+1. Read `references/astrodb-directions.md` (shared conventions) and
+   `references/astrodb-build-directions.md` (build specifics: the `workflow.md` decision log and the
+   `checklists.md` completion-checklist tracking).
 2. Check whether `workflow.md` exists in the current working directory. If it does, read it to carry
    forward context from prior skills.
 3. Create the artifact folder:
@@ -251,7 +252,7 @@ Ask the user to inspect the results table and check if everything looks good, or
 
 ## Final Step: Update `workflow.md`
 
-Follow the convention in `references/astrodb-directions.md`. Append one new entry to
+Follow the convention in `references/astrodb-build-directions.md`. Append one new entry to
 `workflow.md` in the current working directory (create it with the standard header if it
 doesn't exist yet). Record: which file was parsed, which reader was used and why, any
 column descriptions or units that were inferred, what the user confirmed during gap-filling,
@@ -261,7 +262,7 @@ and any columns still missing metadata.
 
 Before telling the user the table is parsed, verify every item in your section of the workflow checklist file and reproduce
 the evidence-annotated list here, per the **completion-checklist convention** in
-`references/astrodb-directions.md`. Don't claim a value you didn't actually extract.
+`references/astrodb-build-directions.md`. Don't claim a value you didn't actually extract.
 
 - [ ] Descriptions were extracted using the format-specific methods in `references/format-specific-metadata.md` — not taken from what Step 2 printed (which is only reliable for ECSV and CDS/MRT).
 - [ ] For a `.txt`/`.dat` input, you checked for the `Byte-by-byte Description of file` MRT signature before treating it as plain CSV.
